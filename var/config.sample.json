@@ -1,0 +1,73 @@
+{
+  "Teams": [
+    {
+      "Title": "Team name",
+      "Users": [
+        {
+          "Name": "Alex White",
+          "Login": "alex",
+          "NickName": "alex"
+        },
+        {
+          "Name": "Den Black",
+          "Login": "den",
+          "NickName": "den_black"
+        }
+      ],
+      "Tasks": [
+        {
+          "Schedule": {
+            "WeekDays": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "Hour": 18,
+            "Minute": 0
+          },
+          "Type": "check_work_log",
+          "Projects": [
+            "DEV"
+          ]
+        },
+        {
+          "Schedule": {
+            "WeekDays": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "Hour": 10,
+            "Minute": 0
+          },
+          "Type": "send_team_message",
+          "Message": "It's time to meet"
+        }
+      ],
+      "Channel": {
+        "Type": "telegram",
+        "ChannelId": "-1001145000000",
+        "Settings": {
+          "token": "331640000:AAEcl3yHv...."
+        }
+      },
+      "Weekend": {
+        "WeekDays": null,
+        "Intervals": null
+      },
+      "IssueTracker": {
+        "Type": "jira",
+        "Settings": {
+          "password": "d0kdsh89KR69K",
+          "url": "https://jira.domain.com",
+          "username": "bot"
+        }
+      },
+      "MinWorkLog": 20000
+    }
+  ]
+}
