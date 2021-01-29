@@ -40,6 +40,7 @@ type Task struct {
 	Type             string
 	Projects         []string
 	Message          string
+	DateModify       string
 	AddUserPoints    int
 	DeleteUserPoints int
 }

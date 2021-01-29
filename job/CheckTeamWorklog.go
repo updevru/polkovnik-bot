@@ -22,7 +22,17 @@ type teamMessageData struct {
 }
 
 func (p Processor) CheckTeamWorkLog(team *domain.Team, task *domain.Task, tracker issueTracker.Interface, date time.Time, channel notifyChannel.Interface) error {
-	logged, err := issueTracker.CalculateTeamWorkLog(team, task, tracker, date)
+	var dateChek = date
+	// Если в задании есть модификатор, то применяем его
+	if len(task.DateModify) > 0 {
+		duration, err := time.ParseDuration(task.DateModify)
+		if err != nil {
+			return err
+		}
+		dateChek = date.Add(duration)
+	}
+
+	logged, err := issueTracker.CalculateTeamWorkLog(team, task, tracker, dateChek)
 	if err != nil {
 		return err
 	}
@@ -50,7 +60,7 @@ func (p Processor) CheckTeamWorkLog(team *domain.Team, task *domain.Task, tracke
 
 	message, err := p.Tpl.RenderString(
 		"telegram/CheckTeamWorklog.html",
-		teamMessageData{List: data, Date: date.Format("02.01.2006")},
+		teamMessageData{List: data, Date: dateChek.Format("02.01.2006")},
 	)
 	if err != nil {
 		return err

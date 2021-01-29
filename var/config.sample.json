@@ -18,7 +18,6 @@
         {
           "Schedule": {
             "WeekDays": [
-              "Monday",
               "Tuesday",
               "Wednesday",
               "Thursday",
@@ -35,7 +34,20 @@
         {
           "Schedule": {
             "WeekDays": [
-              "Monday",
+              "Monday"
+            ],
+            "Hour": 18,
+            "Minute": 0
+          },
+          "Type": "check_work_log",
+          "Projects": [
+            "DEV"
+          ],
+          "DateModify": "-72h"
+        },
+        {
+          "Schedule": {
+            "WeekDays": [
               "Tuesday",
               "Wednesday",
               "Thursday",
