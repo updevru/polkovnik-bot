@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
-	"teamBot/domain"
+	"polkovnik/domain"
 )
 
 type ConfigFile struct {

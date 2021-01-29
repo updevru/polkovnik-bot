@@ -6,10 +6,10 @@ import (
 	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
+	"polkovnik/adapter/storage"
+	"polkovnik/app"
+	"polkovnik/job"
 	"syscall"
-	"teamBot/adapter/storage"
-	"teamBot/app"
-	"teamBot/job"
 	"time"
 )
 

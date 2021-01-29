@@ -2,10 +2,10 @@ package job
 
 import (
 	log "github.com/sirupsen/logrus"
-	"teamBot/adapter/issueTracker"
-	"teamBot/adapter/notifyChannel"
-	"teamBot/app"
-	"teamBot/domain"
+	"polkovnik/adapter/issueTracker"
+	"polkovnik/adapter/notifyChannel"
+	"polkovnik/app"
+	"polkovnik/domain"
 	"time"
 )
 

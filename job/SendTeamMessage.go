@@ -2,8 +2,8 @@ package job
 
 import (
 	"errors"
-	"teamBot/adapter/notifyChannel"
-	"teamBot/domain"
+	"polkovnik/adapter/notifyChannel"
+	"polkovnik/domain"
 )
 
 func (p Processor) SendTeamMessage(team *domain.Team, task *domain.Task, channel notifyChannel.Interface) error {

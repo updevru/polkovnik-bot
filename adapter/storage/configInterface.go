@@ -1,6 +1,6 @@
 package storage
 
-import "teamBot/domain"
+import "polkovnik/domain"
 
 type ConfigInterface interface {
 	Load() (*domain.Config, error)

@@ -1,8 +1,8 @@
 package notifyChannel
 
 import (
+	"polkovnik/domain"
 	"strconv"
-	"teamBot/domain"
 )
 
 type Message struct {

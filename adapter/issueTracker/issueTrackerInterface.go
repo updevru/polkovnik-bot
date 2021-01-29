@@ -2,7 +2,7 @@ package issueTracker
 
 import (
 	"net/url"
-	"teamBot/domain"
+	"polkovnik/domain"
 	"time"
 )
 

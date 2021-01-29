@@ -5,8 +5,8 @@ import (
 	jira "github.com/andygrunwald/go-jira"
 	log "github.com/sirupsen/logrus"
 	"net/url"
+	"polkovnik/domain"
 	"strings"
-	"teamBot/domain"
 	"time"
 )
 
