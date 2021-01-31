@@ -17,7 +17,16 @@
 **Сборка из исходниго кода:**
 
 ```bash
+git clone https://github.com/updevru/polkovnik-bot.git
+cd polkovnik-bot/
 go build
+./polkovnik -c ./config.json
+```
+
+**Запуск в контейнере Docker:**
+
+```bash
+docker run updev/polkovnik-bot -v ./config.json:/app/var/config.json
 ```
 
 ## Запуск
