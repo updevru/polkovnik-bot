@@ -1,3 +1,3 @@
-⚠️<b>За {{ .Date }} не списано время по задачам!</b>
-{{ with .List }}{{ range . }}@{{ .User.Login }} списано только {{ .LoggedTime }}
+<b>За {{ .Date }} не списано время по задачам!</b>
+{{ with .List }}{{ range . }}@{{ .User.NickName }} списано только {{ .LoggedTime }}
 {{ end }}{{ end }}

@@ -45,5 +45,9 @@ func (t Time) ToHumanFormat() string {
 		result = append(result, fmt.Sprintf("%dm", int(minutes)))
 	}
 
+	if len(result) == 0 {
+		return "0h"
+	}
+
 	return strings.Join(result, " ")
 }
