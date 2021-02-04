@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+	"net/http"
 	"os"
 	"os/signal"
 	"polkovnik/adapter/storage"
@@ -15,17 +17,38 @@ import (
 
 var stdout *bool
 var configFile *string
+var httpPort *string
 
 func init() {
 
 	stdout = flag.Bool("o", false, "Send logs to stdout")
 	configFile = flag.String("c", "var/config.json", "Config file")
+	httpPort = flag.String("p", "8080", "HTTP port for UI")
 	flag.Parse()
 
 	log.SetFormatter(&log.TextFormatter{})
 
 	if *stdout == true {
 		log.SetOutput(os.Stdout)
+	}
+}
+
+func runWebServer(port string) {
+	router := mux.NewRouter()
+
+	folder, _ := os.Getwd()
+	fs := http.FileServer(http.Dir(folder + "\\ui\\build"))
+	router.PathPrefix("/").Handler(fs)
+
+	server := http.Server{
+		Addr:    ":" + port,
+		Handler: router,
+	}
+
+	fmt.Println("Starting server at", port)
+	err := server.ListenAndServe()
+	if err != nil {
+		panic(err)
 	}
 }
 
@@ -67,6 +90,7 @@ func main() {
 	}()
 
 	fmt.Println("Running...")
+	go runWebServer(*httpPort)
 	<-exit
 
 	fmt.Print("Save config...")
