@@ -1,5 +1,7 @@
 # PolkovnikBot
 
+[![Go](https://github.com/updevru/polkovnik-bot/workflows/Go/badge.svg)](https://github.com/updevru/polkovnik-bot/actions)
+
 Бот-помощник по огранизации работы команды и увелияения ее эффективности.
 Позволяет выполнять определенные действия по расписанию.
 

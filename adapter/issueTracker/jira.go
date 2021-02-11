@@ -29,31 +29,42 @@ func NewJira(url url.URL, username string, password string) *JiraTracker {
 func (j JiraTracker) GetWorkLogByDate(date time.Time, projects []string) ([]WorkLogResponse, error) {
 
 	dateFormatted := date.Format("2006/01/02")
-	api, _ := j.getApi()
+	api, err := j.getApi()
+	if err != nil {
+		return nil, err
+	}
+
 	options := &jira.SearchOptions{Fields: []string{"*all"}}
 	dql := fmt.Sprintf("project IN(%s) AND worklogDate = \"%s\"", strings.Join(projects, ","), dateFormatted)
 	issues, _, err := api.Issue.Search(dql, options)
+	if err != nil {
+		return nil, err
+	}
 
 	var result []WorkLogResponse
 	for _, issue := range issues {
-		log.Info("Ticket", issue.Key, issue.Fields.Summary)
+		issueLogger := log.WithFields(log.Fields{"Ticket": issue.Key})
+		issueLogger.Info(issue.Fields.Summary)
 
-		for _, log := range issue.Fields.Worklog.Worklogs {
-			logTime := time.Time(*log.Created)
+		for _, logItem := range issue.Fields.Worklog.Worklogs {
+			logTime := time.Time(*logItem.Started)
 			if dateFormatted != logTime.Format("2006/01/02") {
 				continue
 			}
 
 			item := WorkLogResponse{
 				Task:       Task{Id: issue.Key},
-				User:       User{Login: log.Author.Name},
-				LoggedTime: domain.NewTime(log.TimeSpentSeconds),
+				User:       User{Login: logItem.Author.Name},
+				LoggedTime: domain.NewTime(logItem.TimeSpentSeconds),
 				Date:       logTime,
 			}
 			result = append(result, item)
-			//fmt.Println("Log Author", log.Author.Name, log.Author.EmailAddress ,"Time", log.TimeSpent, log.TimeSpentSeconds, "Date", logTime.Format("2006/01/02"))
+			issueLogger.WithFields(log.Fields{
+				"Author": logItem.Author.Name,
+				"Time":   logItem.TimeSpent,
+				"Date":   logTime.Format("2006/01/02 15:04:05"),
+			}).Info("Logged time")
 		}
-
 	}
 
 	return result, err
