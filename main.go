@@ -9,8 +9,11 @@ import (
 	"os"
 	"os/signal"
 	"polkovnik/adapter/storage"
+	"polkovnik/api"
 	"polkovnik/app"
+	"polkovnik/domain"
 	"polkovnik/job"
+	"polkovnik/repository"
 	"syscall"
 	"time"
 )
@@ -33,8 +36,18 @@ func init() {
 	}
 }
 
-func runWebServer(port string) {
+func runWebServer(port string, config *domain.Config) {
+	API := api.NewApiHandler(repository.NewRepository(config))
+
 	router := mux.NewRouter()
+	router.Handle("/api/team", API.TeamList()).Methods(http.MethodGet)
+	router.Handle("/api/team/{teamId}/users", API.UserList()).Methods(http.MethodGet)
+	router.Handle("/api/team/{teamId}/users/{userId}", API.UserGet()).Methods(http.MethodGet)
+	router.Handle("/api/team/{teamId}/users/{userId}", API.UserEdit()).Methods(http.MethodPatch)
+	router.Handle("/api/team/{teamId}/users/{userId}", API.UserDelete()).Methods(http.MethodDelete)
+	router.Handle("/api/team/{teamId}/users", API.UserAdd()).Methods(http.MethodPost)
+	router.Handle("/api/team/{teamId}/tasks", API.TaskList()).Methods(http.MethodGet)
+	router.Use(mux.CORSMethodMiddleware(router))
 
 	folder, _ := os.Getwd()
 	fs := http.FileServer(http.Dir(folder + "\\ui\\build"))
@@ -60,6 +73,12 @@ func main() {
 		return
 	}
 
+	err = app.Migrate(config)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
 	processor := job.Processor{
 		Tpl: app.NewTemplateEngine("templates"),
 	}
@@ -76,21 +95,23 @@ func main() {
 		exit <- true
 	}()
 
-	go func() {
-		for tick := range ticker.C {
-			now := tick.In(time.Local)
-			for _, team := range config.Teams {
-				log.Info("Process team", team.Title)
-				err := processor.ProcessTeamTasks(&team, now)
-				if err != nil {
-					log.Error("Task error", err)
+	if false {
+		go func() {
+			for tick := range ticker.C {
+				now := tick.In(time.Local)
+				for _, team := range config.Teams {
+					log.Info("Process team", team.Title)
+					err := processor.ProcessTeamTasks(team, now)
+					if err != nil {
+						log.Error("Task error", err)
+					}
 				}
 			}
-		}
-	}()
+		}()
+	}
 
 	fmt.Println("Running...")
-	go runWebServer(*httpPort)
+	go runWebServer(*httpPort, config)
 	<-exit
 
 	fmt.Print("Save config...")

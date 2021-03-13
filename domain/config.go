@@ -1,5 +1,6 @@
 package domain
 
 type Config struct {
-	Teams []Team
+	Version float32
+	Teams   []*Team
 }

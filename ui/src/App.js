@@ -1,67 +1,71 @@
 import React from 'react';
-import './App.css';
-import { Layout, Menu } from 'antd';
+import { Router } from 'react-router-dom';
 import {
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
+    Route,
+    Switch,
+    Redirect,
+    withRouter
+} from "react-router-dom"
+import './App.css';
+import {Layout} from 'antd';
+import Sidebar from './Components/Sidebar/Sidebar'
+import Header from './Components/Header/Header'
+import HomePage from "./Pages/HomePage";
+import SettingsPage from "./Pages/SettingsPage";
+import {createBrowserHistory} from 'history'
+import UserListPage from "./Pages/UserListPage";
+import TaskListPage from "./Pages/TaskListPage";
+import TeamSettingsPage from "./Pages/TeamSettingsPage";
+import WeekendSettingsPage from "./Pages/WeekendSettingsPage";
+import UserAddPage from "./Pages/UserAddPage";
+import UserEditPage from "./Pages/UserEditPage";
 
-const { Header, Sider, Content } = Layout;
+const { Content } = Layout;
+// создаём кастомную историю
+const history = createBrowserHistory()
 
 class App extends React.Component {
-  state = {
-    collapsed: false,
-  };
+    state = {
+        collapsed: false,
+    };
 
-  toggle = () => {
-    this.setState({
-      collapsed: !this.state.collapsed,
-    });
-  };
+    toggle = () => {
+        this.setState({
+            collapsed: !this.state.collapsed,
+        });
+    };
 
-  render() {
-    return (
-        <Layout>
-          <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
-            <div className="logo" />
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-              <Menu.Item key="1" icon={<UserOutlined />}>
-                nav 1
-              </Menu.Item>
-              <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-                nav 2
-              </Menu.Item>
-              <Menu.Item key="3" icon={<UploadOutlined />}>
-                nav 3
-              </Menu.Item>
-            </Menu>
-
-
-          </Sider>
-          <Layout className="site-layout">
-            <Header className="site-layout-background" style={{ padding: 0 }}>
-              {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                className: 'trigger',
-                onClick: this.toggle,
-              })}
-            </Header>
-            <Content
-                className="site-layout-background"
-                style={{
-                  margin: '24px 16px',
-                  padding: 24,
-                  minHeight: 280,
-                }}
-            >
-              Content
-            </Content>
-          </Layout>
-        </Layout>
-    );
-  }
+    render() {
+        return (
+            <Router history={history}>
+            <Layout>
+                <Sidebar />
+                <Layout className="site-layout">
+                    <Header />
+                    <Content
+                        className=""
+                        style={{
+                            margin: '24px 16px',
+                            minHeight: 280,
+                        }}
+                    >
+                        <Switch>
+                            <Route history={history} path='/team/settings' component={TeamSettingsPage} />
+                            <Route history={history} path='/team/weekend' component={WeekendSettingsPage} />
+                            <Route history={history} path='/settings' component={SettingsPage} />
+                            <Route history={history} path='/team/:teamId/users/add' component={UserAddPage} />
+                            <Route history={history} path='/team/:teamId/users/edit/:userId' component={UserEditPage} />
+                            <Route history={history} path='/team/:teamId/users' component={UserListPage} />
+                            <Route history={history} path='/team/:teamId/tasks' component={TaskListPage} />
+                            <Route history={history} exact path='/' component={HomePage} />
+                            <Redirect to='/' />
+                        </Switch>
+                    </Content>
+                </Layout>
+            </Layout>
+            </Router>
+        );
+    }
 }
 
 export default App;

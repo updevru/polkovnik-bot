@@ -35,6 +35,7 @@ func (s Schedule) GetStartTime(date time.Time) *time.Time {
 }
 
 type Task struct {
+	Id               string
 	Schedule         Schedule
 	LastRunTime      time.Time
 	Type             string

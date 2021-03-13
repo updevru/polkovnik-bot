@@ -19,3 +19,12 @@
 .site-layout .site-layout-background {
   background: #fff;
 }
+
+.app-form-container {
+  background-color: #FFF;
+  padding: 20px;
+}
+
+.app-form-container form {
+  max-width: 500px;
+}
