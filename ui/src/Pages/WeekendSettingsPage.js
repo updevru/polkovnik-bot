@@ -1,15 +1,6 @@
 import React from 'react';
 import {PageHeader, Form, Input, Button, Checkbox  } from "antd";
-
-const days = [
-    { label: 'Monday', value: 'Monday' },
-    { label: 'Tuesday', value: 'Tuesday' },
-    { label: 'Wednesday', value: 'Wednesday' },
-    { label: 'Thursday', value: 'Thursday' },
-    { label: 'Friday', value: 'Friday' },
-    { label: 'Saturday', value: 'Saturday' },
-    { label: 'Sunday', value: 'Sunday' },
-];
+import Dictionary from "../Services/Dictionary";
 
 class WeekendSettingsPage extends React.Component{
 
@@ -43,7 +34,7 @@ class WeekendSettingsPage extends React.Component{
                         label="Рабочие дни недели"
                         name="weekdays"
                     >
-                        <Checkbox.Group options={days} />
+                        <Checkbox.Group options={Dictionary.getWeekdays()} />
                     </Form.Item>
 
                     <Form.Item>

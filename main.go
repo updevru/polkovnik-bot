@@ -41,12 +41,18 @@ func runWebServer(port string, config *domain.Config) {
 
 	router := mux.NewRouter()
 	router.Handle("/api/team", API.TeamList()).Methods(http.MethodGet)
+
 	router.Handle("/api/team/{teamId}/users", API.UserList()).Methods(http.MethodGet)
+	router.Handle("/api/team/{teamId}/users", API.UserAdd()).Methods(http.MethodPost)
 	router.Handle("/api/team/{teamId}/users/{userId}", API.UserGet()).Methods(http.MethodGet)
 	router.Handle("/api/team/{teamId}/users/{userId}", API.UserEdit()).Methods(http.MethodPatch)
 	router.Handle("/api/team/{teamId}/users/{userId}", API.UserDelete()).Methods(http.MethodDelete)
-	router.Handle("/api/team/{teamId}/users", API.UserAdd()).Methods(http.MethodPost)
+
 	router.Handle("/api/team/{teamId}/tasks", API.TaskList()).Methods(http.MethodGet)
+	router.Handle("/api/team/{teamId}/tasks", API.TaskAdd()).Methods(http.MethodPost)
+	router.Handle("/api/team/{teamId}/tasks/{taskId}", API.TaskGet()).Methods(http.MethodGet)
+	router.Handle("/api/team/{teamId}/tasks/{taskId}", API.TaskEdit()).Methods(http.MethodPatch)
+	router.Handle("/api/team/{teamId}/tasks/{taskId}", API.TaskDelete()).Methods(http.MethodDelete)
 	router.Use(mux.CORSMethodMiddleware(router))
 
 	folder, _ := os.Getwd()

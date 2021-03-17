@@ -19,6 +19,8 @@ import TeamSettingsPage from "./Pages/TeamSettingsPage";
 import WeekendSettingsPage from "./Pages/WeekendSettingsPage";
 import UserAddPage from "./Pages/UserAddPage";
 import UserEditPage from "./Pages/UserEditPage";
+import TaskAddPage from "./Pages/TaskAddPage";
+import TaskEditPage from "./Pages/TaskEditPage";
 
 const { Content } = Layout;
 // создаём кастомную историю
@@ -53,9 +55,13 @@ class App extends React.Component {
                             <Route history={history} path='/team/settings' component={TeamSettingsPage} />
                             <Route history={history} path='/team/weekend' component={WeekendSettingsPage} />
                             <Route history={history} path='/settings' component={SettingsPage} />
+
                             <Route history={history} path='/team/:teamId/users/add' component={UserAddPage} />
                             <Route history={history} path='/team/:teamId/users/edit/:userId' component={UserEditPage} />
                             <Route history={history} path='/team/:teamId/users' component={UserListPage} />
+
+                            <Route history={history} path='/team/:teamId/tasks/add' component={TaskAddPage} />
+                            <Route history={history} path='/team/:teamId/tasks/edit/:taskId' component={TaskEditPage} />
                             <Route history={history} path='/team/:teamId/tasks' component={TaskListPage} />
                             <Route history={history} exact path='/' component={HomePage} />
                             <Redirect to='/' />

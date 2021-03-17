@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"errors"
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -36,14 +38,96 @@ func (s Schedule) GetStartTime(date time.Time) *time.Time {
 
 type Task struct {
 	Id               string
-	Schedule         Schedule
+	Schedule         *Schedule
 	LastRunTime      time.Time
-	Type             string
-	Projects         []string
+	Type             string   `validate:"required"`
+	Projects         []string `validate:"required"`
 	Message          string
 	DateModify       string
 	AddUserPoints    int
 	DeleteUserPoints int
+}
+
+func validateTask(typeTask string, scheduleWeekDays []string, scheduleHour int, scheduleMinute int, projects []string, message string, dateModify string) error {
+	if typeTask != CheckTeamWorkLog && typeTask != SendTeamMessage {
+		return errors.New("invalid task")
+	}
+
+	if len(scheduleWeekDays) == 0 {
+		return errors.New("schedule weekdays must be set")
+	}
+
+	if scheduleHour < 0 || scheduleHour > 24 {
+		return errors.New("schedule hour must be more 0 and less 24")
+	}
+
+	if scheduleMinute < 0 || scheduleMinute > 60 {
+		return errors.New("schedule minute must be more 0 and less 60")
+	}
+
+	if typeTask == SendTeamMessage {
+		if len(message) < 3 {
+			return errors.New("message must be set")
+		}
+	}
+
+	if typeTask == CheckTeamWorkLog {
+		if len(projects) == 0 {
+			return errors.New("projects must be set")
+		}
+
+		for _, row := range projects {
+			if len(row) < 2 {
+				return errors.New("project name not be empty")
+			}
+		}
+
+		if len(dateModify) > 0 {
+			_, err := time.ParseDuration(dateModify)
+			if err != nil {
+				return errors.New("date modify error: " + err.Error())
+			}
+		}
+	}
+
+	return nil
+}
+
+func NewTask(typeTask string, scheduleWeekDays []string, scheduleHour int, scheduleMinute int, projects []string, message string, dateModify string) (*Task, error) {
+	err := validateTask(typeTask, scheduleWeekDays, scheduleHour, scheduleMinute, projects, message, dateModify)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Task{
+		Id: uuid.NewString(),
+		Schedule: &Schedule{
+			WeekDays: scheduleWeekDays,
+			Hour:     scheduleHour,
+			Minute:   scheduleMinute,
+		},
+		Type:       typeTask,
+		Projects:   projects,
+		Message:    message,
+		DateModify: dateModify,
+	}, nil
+}
+
+func (t *Task) Edit(typeTask string, scheduleWeekDays []string, scheduleHour int, scheduleMinute int, projects []string, message string, dateModify string) error {
+	err := validateTask(typeTask, scheduleWeekDays, scheduleHour, scheduleMinute, projects, message, dateModify)
+	if err != nil {
+		return err
+	}
+
+	t.Type = typeTask
+	t.Projects = projects
+	t.Message = message
+	t.Schedule.WeekDays = scheduleWeekDays
+	t.Schedule.Minute = scheduleMinute
+	t.Schedule.Hour = scheduleHour
+	t.DateModify = dateModify
+
+	return nil
 }
 
 func (t Task) IsRun(date time.Time) bool {
