@@ -13,7 +13,7 @@ type Interface interface {
 	SendTeamMessage(message Message) (bool, error)
 }
 
-func New(channel domain.NotifyChannel) Interface {
+func New(channel *domain.NotifyChannel) Interface {
 	var result Interface
 	switch channel.Type {
 	case TelegramChannelType:

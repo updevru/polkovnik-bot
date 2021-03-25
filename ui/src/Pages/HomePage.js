@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, Col, Row, List, Spin } from 'antd';
-import {UserOutlined, BarsOutlined, CalendarOutlined, SettingOutlined} from '@ant-design/icons';
+import { Card, List, Spin } from 'antd';
+import {UserOutlined, BarsOutlined, SettingOutlined} from '@ant-design/icons';
 import {Link} from "react-router-dom";
 import ServerApi from "../Services/ServerApi";
 
@@ -11,11 +11,11 @@ const teamMenu = [
     {title: "Задачи", icon: <BarsOutlined />, url: function (team){
             return '/team/' + team.id + '/tasks'
     }},
-    {title: "Расписание", icon: <CalendarOutlined />, url: function (team){
-        return '/team/weekend'
-    }},
+    // {title: "Расписание", icon: <CalendarOutlined />, url: function (team){
+    //     return '/team/weekend'
+    // }},
     {title: "Настройки", icon: <SettingOutlined />, url: function (team){
-        return '/team/settings';
+        return '/team/' + team.id + '/settings';
     }}
 ];
 
@@ -48,7 +48,7 @@ class HomePage extends React.Component{
                 <Spin spinning={this.state.loading}>
                 <List
                     grid={{
-                        gutter: 0,
+                        gutter: 10,
                         column: 5,
                     }}
                     dataSource={this.state.teams}

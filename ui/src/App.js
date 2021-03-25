@@ -3,8 +3,7 @@ import { Router } from 'react-router-dom';
 import {
     Route,
     Switch,
-    Redirect,
-    withRouter
+    Redirect
 } from "react-router-dom"
 import './App.css';
 import {Layout} from 'antd';
@@ -21,6 +20,7 @@ import UserAddPage from "./Pages/UserAddPage";
 import UserEditPage from "./Pages/UserEditPage";
 import TaskAddPage from "./Pages/TaskAddPage";
 import TaskEditPage from "./Pages/TaskEditPage";
+import TeamAddPage from "./Pages/TeamAddPage";
 
 const { Content } = Layout;
 // создаём кастомную историю
@@ -52,7 +52,8 @@ class App extends React.Component {
                         }}
                     >
                         <Switch>
-                            <Route history={history} path='/team/settings' component={TeamSettingsPage} />
+                            <Route history={history} path='/team/add' component={TeamAddPage} />
+                            <Route history={history} path='/team/:teamId/settings' component={TeamSettingsPage} />
                             <Route history={history} path='/team/weekend' component={WeekendSettingsPage} />
                             <Route history={history} path='/settings' component={SettingsPage} />
 

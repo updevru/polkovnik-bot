@@ -6,6 +6,17 @@ class Dictionary {
         ]
     }
 
+    getTaskType(value) {
+        let result
+        this.getTaskTypes().forEach(function (item) {
+            if (item.value === value) {
+                result = item
+            }
+        })
+
+        return result;
+    }
+
     getWeekdays() {
         return [
             { label: 'Monday', value: 'Monday' },
@@ -15,6 +26,18 @@ class Dictionary {
             { label: 'Friday', value: 'Friday' },
             { label: 'Saturday', value: 'Saturday' },
             { label: 'Sunday', value: 'Sunday' },
+        ]
+    }
+
+    getTrackerTypes() {
+        return [
+            {"label": "Jira", "value": "jira"},
+        ]
+    }
+
+    getChannelTypes() {
+        return [
+            {"label": "Telegram", "value": "telegram"},
         ]
     }
 }

@@ -1,58 +1,52 @@
 import React from 'react';
-import {PageHeader, Spin} from 'antd';
+import {PageHeader, Spin} from "antd";
 import ServerApi from "../Services/ServerApi";
 import AlertMessage from "../Components/AlertMessage/AlertMessage";
-import TaskEditForm from "../Forms/TaskEditForm";
+import TeamAddForm from "../Forms/TeamAddForm";
 
-class TaskAddPage extends React.Component{
+class TeamAddPage extends React.Component{
 
     constructor(props) {
         super(props);
         this.state = {
-            item: {},
+            item: null,
             loading: false,
             message: {error: null, success: null}
         }
 
-        this.saveTask = this.saveTask.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
     }
 
-    getTeamId() {
-        return this.props.match.params.teamId;
-    }
-
-    async saveTask(task)
+    async saveTeam(team)
     {
         this.setState({loading: true})
-        let response = await ServerApi.task(this.getTeamId()).add(task)
+        let response = await ServerApi.team().add(team)
         if ('error' in response) {
             this.setState({message: {error: response.error}, loading: false})
         } else {
-            this.setState({message: {success: "Задача добавлена"}, loading: false})
+            this.setState({message: {success: "Команда создана"}, loading: false})
         }
-
     }
 
     handleSubmit(values) {
-        this.saveTask(values)
+        this.saveTeam(values)
     };
 
     render() {
         return (
             <PageHeader
                 onBack={() => window.history.back()}
-                title="Новая задача"
+                title="Новая команда"
             >
-                <Spin spinning={this.state.loading}>
-                    <div className={"app-form-container"}>
+                <div className={"app-form-container"}>
+                    <Spin spinning={this.state.loading}>
                         <AlertMessage message={this.state.message} />
-                        <TaskEditForm onSubmit={this.handleSubmit}/>
-                    </div>
-                </Spin>
+                        <TeamAddForm onSubmit={this.handleSubmit}/>
+                    </Spin>
+                </div>
             </PageHeader>
         )
     }
 }
 
-export default TaskAddPage
+export default TeamAddPage

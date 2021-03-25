@@ -1,5 +1,5 @@
 import React from 'react';
-import {PageHeader, Form, Input, Button, Checkbox  } from "antd";
+import {PageHeader, Form, Button, Checkbox  } from "antd";
 import Dictionary from "../Services/Dictionary";
 
 class WeekendSettingsPage extends React.Component{

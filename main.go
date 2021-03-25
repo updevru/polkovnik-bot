@@ -41,6 +41,9 @@ func runWebServer(port string, config *domain.Config) {
 
 	router := mux.NewRouter()
 	router.Handle("/api/team", API.TeamList()).Methods(http.MethodGet)
+	router.Handle("/api/team", API.TeamAdd()).Methods(http.MethodPost)
+	router.Handle("/api/team/{teamId}/settings", API.TeamSettingsGet()).Methods(http.MethodGet)
+	router.Handle("/api/team/{teamId}/settings", API.TeamSettingsEdit()).Methods(http.MethodPost)
 
 	router.Handle("/api/team/{teamId}/users", API.UserList()).Methods(http.MethodGet)
 	router.Handle("/api/team/{teamId}/users", API.UserAdd()).Methods(http.MethodPost)

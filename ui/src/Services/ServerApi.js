@@ -11,6 +11,10 @@ class ServerApi {
         return new ApiResource(this.restUrl, 'team');
     }
 
+    teamSettings(teamId) {
+        return new ApiResource(this.restUrl, 'team/' + teamId + '/settings');
+    }
+
     user(teamId) {
         return new ApiResource(this.restUrl, 'team/' + teamId + '/users');
     }

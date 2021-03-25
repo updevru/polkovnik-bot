@@ -25,7 +25,7 @@ type Interface interface {
 	GetWorkLogByDate(time time.Time, projects []string) ([]WorkLogResponse, error)
 }
 
-func New(tracker domain.IssueTracker) Interface {
+func New(tracker *domain.IssueTracker) Interface {
 	var IssueTracker Interface
 	switch tracker.Type {
 	case JiraTrackerTape:

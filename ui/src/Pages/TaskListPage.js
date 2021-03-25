@@ -1,8 +1,9 @@
 import React from 'react';
-import {Table, Tag, Space, PageHeader, Button, Modal, List} from 'antd';
+import {Table, Tag, Space, PageHeader, Button, Modal, Spin} from 'antd';
 import ServerApi from "../Services/ServerApi";
 import {Link} from "react-router-dom";
 import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
+import Dictionary from "../Services/Dictionary";
 
 const { confirm } = Modal;
 
@@ -60,8 +61,12 @@ class TaskListPage extends React.Component{
         return [
             {
                 title: 'Задание',
-                dataIndex: 'type',
                 key: 'type',
+                render: (text, record) => (
+                    <span>
+                        {Dictionary.getTaskType(record.type).label}
+                    </span>
+                )
             },
             {
                 title: 'Расписание',
@@ -109,7 +114,9 @@ class TaskListPage extends React.Component{
                     </Button>
                 ]}
             >
-                <Table columns={this.getColumns()} dataSource={this.state.list} />
+                <Spin spinning={this.state.loading}>
+                    <Table columns={this.getColumns()} dataSource={this.state.list} />
+                </Spin>
             </PageHeader>
         )
     }

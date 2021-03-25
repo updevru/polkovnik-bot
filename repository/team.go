@@ -19,3 +19,20 @@ func (r Repository) GetTeam(id string) *domain.Team {
 
 	return nil
 }
+
+func (r Repository) EditTeam(team *domain.Team) bool {
+	for i, row := range r.config.Teams {
+		if row.Id == team.Id {
+			r.config.Teams[i] = team
+			return true
+		}
+	}
+
+	return false
+}
+
+func (r Repository) AddTeam(team *domain.Team) bool {
+	r.config.Teams = append(r.config.Teams, team)
+
+	return true
+}
