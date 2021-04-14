@@ -9,6 +9,7 @@
 - Отправка сообщений в командный чат по расписанию
 - Интеграция с такс трекерами - Jira
 - Интеграция с чатами - Telegram
+- Управление через web интерфейс
 
 ## Установка
 
@@ -20,13 +21,18 @@
 git clone https://github.com/updevru/polkovnik-bot.git
 cd polkovnik-bot/
 go build
+
+cd ui
+npm install
+npm run build
+
 ./polkovnik -c ./config.json
 ```
 
 **Запуск в контейнере Docker:**
 
 ```bash
-docker run updev/polkovnik-bot -v ./config.json:/app/var/config.json
+docker run updev/polkovnik-bot -v ./config.json:/app/var/config.json -p 8080:8080
 ```
 
 ## Запуск
@@ -37,8 +43,10 @@ docker run updev/polkovnik-bot -v ./config.json:/app/var/config.json
 
 Параметры запуска:
 ```
--c string Config file (default "var/config.json")
+-c string Config file (default "./var/config.json")
 -o Send logs to stdout
+-p HTTP port for UI (default 8080)
+-u Folder with UI (default "./ui/build")
 ```
 
 ## Описание конфигурации

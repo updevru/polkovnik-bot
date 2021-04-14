@@ -108,7 +108,7 @@ func TestSchedule_GetStartTime(t *testing.T) {
 
 func TestTask_IsRun(t1 *testing.T) {
 	type fields struct {
-		Schedule    Schedule
+		Schedule    *Schedule
 		LastRunTime time.Time
 	}
 	type args struct {
@@ -125,7 +125,7 @@ func TestTask_IsRun(t1 *testing.T) {
 		{
 			name: "First start",
 			fields: fields{
-				Schedule: Schedule{
+				Schedule: &Schedule{
 					WeekDays: []string{"Friday"},
 					Hour:     1,
 					Minute:   25,
@@ -137,7 +137,7 @@ func TestTask_IsRun(t1 *testing.T) {
 		{
 			name: "Another day",
 			fields: fields{
-				Schedule: Schedule{
+				Schedule: &Schedule{
 					WeekDays: []string{"Thursday"},
 					Hour:     1,
 					Minute:   25,
@@ -149,7 +149,7 @@ func TestTask_IsRun(t1 *testing.T) {
 		{
 			name: "Already started at today",
 			fields: fields{
-				Schedule: Schedule{
+				Schedule: &Schedule{
 					WeekDays: []string{"Friday"},
 					Hour:     1,
 					Minute:   25,
@@ -162,7 +162,7 @@ func TestTask_IsRun(t1 *testing.T) {
 		{
 			name: "Start next day",
 			fields: fields{
-				Schedule: Schedule{
+				Schedule: &Schedule{
 					WeekDays: []string{"Friday"},
 					Hour:     1,
 					Minute:   25,

@@ -26,6 +26,7 @@ func createTeamResponseItem(team *domain.Team) teamResponseItem {
 func (a apiHandler) TeamList() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var list []teamResponseItem
+		list = []teamResponseItem{}
 		for _, team := range a.store.GetTeams() {
 			list = append(list, createTeamResponseItem(team))
 		}

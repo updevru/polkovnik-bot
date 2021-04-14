@@ -18,8 +18,8 @@ func NewConfigFile(file string) *ConfigFile {
 	}
 }
 
-func (c ConfigFile) Load() (*domain.Config, error) {
-	file, err := os.Open(c.file)
+func (c *ConfigFile) Load() (*domain.Config, error) {
+	file, err := os.OpenFile(c.file, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +30,11 @@ func (c ConfigFile) Load() (*domain.Config, error) {
 		return nil, err
 	}
 
-	err = json.Unmarshal(fileContents, &c.data)
+	if len(fileContents) > 0 {
+		err = json.Unmarshal(fileContents, &c.data)
+	} else {
+		c.data = domain.NewConfig()
+	}
 
 	return c.data, err
 }
