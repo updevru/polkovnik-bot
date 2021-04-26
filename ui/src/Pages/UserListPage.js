@@ -47,6 +47,16 @@ class UserListPage extends React.Component{
                 key: 'nickname',
             },
             {
+                title: 'Активен',
+                key: 'active',
+                render: (text, record) => (
+                    <span>
+                        {record.active === true && "Да"}
+                        {record.active === false && "Нет"}
+                    </span>
+                )
+            },
+            {
                 title: 'Действия',
                 key: 'action',
                 render: (text, record) => (

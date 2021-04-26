@@ -77,7 +77,7 @@ func validateTeamSettings(title string, notifyChannelType string, notifyChannelC
 	return nil
 }
 
-func (t *Team) EditSettings(title string, notifyChannelType string, notifyChannelChannelId string, notifyChannelSettings map[string]string, issueTrackerType string, issueTrackerSettings map[string]string, minWorkLog int) error {
+func (t *Team) EditSettings(title string, notifyChannelType string, notifyChannelChannelId string, notifyChannelSettings map[string]string, issueTrackerType string, issueTrackerSettings map[string]string, minWorkLog int, weekendDays []string, intervals []WeekendInterval) error {
 	err := validateTeamSettings(title, notifyChannelType, notifyChannelChannelId, notifyChannelSettings, issueTrackerType, issueTrackerSettings, minWorkLog)
 	if err != nil {
 		return err
@@ -97,6 +97,8 @@ func (t *Team) EditSettings(title string, notifyChannelType string, notifyChanne
 	t.IssueTracker.Type = issueTrackerType
 	t.IssueTracker.Settings = issueTrackerSettings
 	t.MinWorkLog = minWorkLog
+	t.Weekend.WeekDays = weekendDays
+	t.Weekend.Intervals = intervals
 
 	return nil
 }

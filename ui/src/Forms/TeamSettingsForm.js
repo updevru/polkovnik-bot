@@ -1,6 +1,7 @@
 import React from 'react';
-import {Button, Divider, Form, Input, InputNumber, Select} from "antd";
+import {Button, Divider, Form, Input, InputNumber, Select, Space} from "antd";
 import Dictionary from "../Services/Dictionary";
+import {Weekend, WeekendDataValue, WeekendFormValue} from "../Components/Weekend/Weekend";
 
 class TeamSettingsForm extends React.Component {
 
@@ -10,7 +11,7 @@ class TeamSettingsForm extends React.Component {
     }
 
     onFinish(values: any) {
-        this.props.onSubmit(values)
+        this.props.onSubmit(WeekendDataValue(values))
     }
 
     render() {
@@ -18,7 +19,7 @@ class TeamSettingsForm extends React.Component {
             <Form
                 layout="vertical"
                 name="basic"
-                initialValues={this.props.value}
+                initialValues={WeekendFormValue(this.props.value)}
                 onFinish={this.onFinish}
             >
                 <Form.Item
@@ -97,6 +98,9 @@ class TeamSettingsForm extends React.Component {
                 >
                     <Input />
                 </Form.Item>
+
+                <Divider>Выходные</Divider>
+                <Weekend button_add_title={"Добавить выходные"}/>
 
                 <Form.Item>
                     <Button type="primary" htmlType="submit">

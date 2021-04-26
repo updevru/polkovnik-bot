@@ -12,6 +12,7 @@ type User struct {
 	NickName string
 	Points   int
 	Weekend  Weekend
+	Active   bool
 }
 
 func userValidate(name string, login string, nickname string) error {
@@ -30,7 +31,7 @@ func userValidate(name string, login string, nickname string) error {
 	return nil
 }
 
-func NewUser(name string, login string, nickname string) (*User, error) {
+func NewUser(name string, login string, nickname string, weekendDays []string, intervals []WeekendInterval) (*User, error) {
 	err := userValidate(name, login, nickname)
 	if err != nil {
 		return nil, err
@@ -42,11 +43,15 @@ func NewUser(name string, login string, nickname string) (*User, error) {
 		Login:    login,
 		NickName: nickname,
 		Points:   0,
-		Weekend:  Weekend{},
+		Weekend: Weekend{
+			WeekDays:  weekendDays,
+			Intervals: intervals,
+		},
+		Active: true,
 	}, nil
 }
 
-func (u *User) Edit(name string, login string, nickname string) error {
+func (u *User) Edit(name string, login string, nickname string, active bool, weekendDays []string, intervals []WeekendInterval) error {
 	err := userValidate(name, login, nickname)
 	if err != nil {
 		return err
@@ -55,6 +60,9 @@ func (u *User) Edit(name string, login string, nickname string) error {
 	u.Name = name
 	u.Login = login
 	u.NickName = nickname
+	u.Weekend.WeekDays = weekendDays
+	u.Weekend.Intervals = intervals
+	u.Active = active
 
 	return nil
 }

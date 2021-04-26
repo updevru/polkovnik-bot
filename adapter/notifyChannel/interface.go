@@ -1,6 +1,7 @@
 package notifyChannel
 
 import (
+	"errors"
 	"polkovnik/domain"
 	"strconv"
 )
@@ -13,23 +14,25 @@ type Interface interface {
 	SendTeamMessage(message Message) (bool, error)
 }
 
-func New(channel *domain.NotifyChannel) Interface {
+func New(channel *domain.NotifyChannel) (Interface, error) {
 	var result Interface
 	switch channel.Type {
 	case TelegramChannelType:
 		var err error
-		id, _ := strconv.ParseInt(channel.ChannelId, 10, 64)
+		id, err := strconv.ParseInt(channel.ChannelId, 10, 64)
 
-		result, err = NewTelegram(channel.Settings["token"], id)
+		if err == nil {
+			result, err = NewTelegram(channel.Settings["token"], id)
+		}
 
 		if err != nil {
-			panic(err.Error())
+			return nil, err
 		}
 
 		break
 	default:
-		panic("Channel type not found")
+		return nil, errors.New("channel type not found")
 	}
 
-	return result
+	return result, nil
 }

@@ -18,13 +18,26 @@ type teamSettingsResponseItem struct {
 	IssueTrackerType       string            `json:"issue_tracker_type"`
 	IssueTrackerSettings   map[string]string `json:"issue_tracker_settings"`
 	MinWorkLog             int               `json:"min_work_log"`
+	Weekend                weekendItem       `json:"weekend"`
 }
 
 func createTeamSettingsResponseItem(team *domain.Team) teamSettingsResponseItem {
+	var intervals []weekendInterval
+	for _, row := range team.Weekend.Intervals {
+		intervals = append(intervals, weekendInterval{
+			Start: row.Start.Format("02-01-2006"),
+			End:   row.End.Format("02-01-2006"),
+		})
+	}
+
 	result := teamSettingsResponseItem{
 		Id:         team.Id,
 		Title:      team.Title,
 		MinWorkLog: team.MinWorkLog,
+		Weekend: weekendItem{
+			WeekDays:  team.Weekend.WeekDays,
+			Intervals: intervals,
+		},
 	}
 
 	if team.Channel != nil {
@@ -82,6 +95,8 @@ func (a apiHandler) TeamSettingsEdit() http.Handler {
 			request.IssueTrackerType,
 			request.IssueTrackerSettings,
 			request.MinWorkLog,
+			request.Weekend.WeekDays,
+			request.Weekend.createIntervals(),
 		)
 
 		if err != nil {

@@ -63,9 +63,9 @@ func runWebServer(port string, config *domain.Config) {
 	router.Handle("/api/team/{teamId}/tasks/{taskId}", API.TaskDelete()).Methods(http.MethodDelete)
 	router.Use(mux.CORSMethodMiddleware(router))
 
-	dir := http.Dir(*uiFolder)
-	fmt.Println("Directory UI: ", dir)
-	router.PathPrefix("/").Handler(http.FileServer(dir))
+	fmt.Println("Directory UI: ", uiFolder)
+	spaHandler := api.SpaHandler{StaticPath: *uiFolder, IndexPath: "index.html"}
+	router.PathPrefix("/").Handler(spaHandler)
 
 	server := http.Server{
 		Addr:    ":" + port,
@@ -116,7 +116,7 @@ func main() {
 				log.Info("Process team", team.Title)
 				err := processor.ProcessTeamTasks(team, now)
 				if err != nil {
-					log.Error("Task error", err)
+					log.Error("Task error ", err)
 				}
 			}
 		}

@@ -1,5 +1,6 @@
 import React from 'react';
-import {Form, Input, Button} from 'antd';
+import {Form, Input, Button, Space, Checkbox} from 'antd';
+import {Weekend, WeekendDataValue, WeekendFormValue} from "../Components/Weekend/Weekend";
 
 class EditUserForm extends React.Component {
     constructor(props) {
@@ -8,7 +9,7 @@ class EditUserForm extends React.Component {
     }
 
     onFinish(values: any) {
-        this.props.onSubmit(values)
+        this.props.onSubmit(WeekendDataValue(values))
     }
 
     render() {
@@ -16,9 +17,16 @@ class EditUserForm extends React.Component {
             <Form
                 layout="vertical"
                 name="basic"
-                initialValues={this.props.value}
+                initialValues={WeekendFormValue(this.props.value)}
                 onFinish={this.onFinish}
             >
+                <Form.Item
+                    name="active"
+                    valuePropName="checked"
+                >
+                    <Checkbox>Активен</Checkbox>
+                </Form.Item>
+
                 <Form.Item
                     label="Имя"
                     name="name"
@@ -42,6 +50,8 @@ class EditUserForm extends React.Component {
                 >
                     <Input />
                 </Form.Item>
+
+                <Weekend />
 
                 <Form.Item>
                     <Button type="primary" htmlType="submit">

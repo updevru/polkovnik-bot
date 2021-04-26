@@ -10,10 +10,12 @@ import (
 )
 
 type userResponseItem struct {
-	Id       string `json:"id"`
-	Name     string `json:"name"`
-	Login    string `json:"login"`
-	NickName string `json:"nickname"`
+	Id       string      `json:"id"`
+	Name     string      `json:"name"`
+	Login    string      `json:"login"`
+	NickName string      `json:"nickname"`
+	Weekend  weekendItem `json:"weekend"`
+	Active   bool        `json:"active"`
 }
 
 type userResponseList struct {
@@ -21,11 +23,23 @@ type userResponseList struct {
 }
 
 func createUserResponseItem(user *domain.User) userResponseItem {
+	var intervals []weekendInterval
+	for _, row := range user.Weekend.Intervals {
+		intervals = append(intervals, weekendInterval{
+			Start: row.Start.Format("02-01-2006"),
+			End:   row.End.Format("02-01-2006"),
+		})
+	}
 	return userResponseItem{
 		Id:       user.Id,
 		Name:     user.Name,
 		Login:    user.Login,
 		NickName: user.NickName,
+		Weekend: weekendItem{
+			WeekDays:  user.Weekend.WeekDays,
+			Intervals: intervals,
+		},
+		Active: user.Active,
 	}
 }
 
@@ -70,7 +84,7 @@ func (a apiHandler) UserAdd() http.Handler {
 			err = json.Unmarshal(body, &request)
 		}
 
-		user, err = domain.NewUser(request.Name, request.Login, request.NickName)
+		user, err = domain.NewUser(request.Name, request.Login, request.NickName, request.Weekend.WeekDays, request.Weekend.createIntervals())
 		if err != nil {
 			renderJson(w, http.StatusBadRequest, &ResponseError{Error: err.Error()})
 			return
@@ -102,7 +116,7 @@ func (a apiHandler) UserEdit() http.Handler {
 			return
 		}
 
-		err = user.Edit(request.Name, request.Login, request.NickName)
+		err = user.Edit(request.Name, request.Login, request.NickName, request.Active, request.Weekend.WeekDays, request.Weekend.createIntervals())
 		if err != nil {
 			renderJson(w, http.StatusBadRequest, &ResponseError{Error: err.Error()})
 			return
