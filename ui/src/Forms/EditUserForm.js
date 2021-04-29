@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form, Input, Button, Space, Checkbox} from 'antd';
+import {Form, Input, Button, Checkbox} from 'antd';
 import {Weekend, WeekendDataValue, WeekendFormValue} from "../Components/Weekend/Weekend";
 
 class EditUserForm extends React.Component {

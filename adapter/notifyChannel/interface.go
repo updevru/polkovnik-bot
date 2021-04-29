@@ -15,6 +15,10 @@ type Interface interface {
 }
 
 func New(channel *domain.NotifyChannel) (Interface, error) {
+	if len(channel.Type) == 0 {
+		return nil, errors.New("channel type not defined")
+	}
+
 	var result Interface
 	switch channel.Type {
 	case TelegramChannelType:

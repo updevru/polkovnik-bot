@@ -10,8 +10,13 @@
   color: #1890ff;
 }
 
-
-
 .site-layout .site-layout-background {
   background: #fff;
+}
+
+#root {
+  height: 100%;
+}
+.global-layout {
+  height: 100%;
 }

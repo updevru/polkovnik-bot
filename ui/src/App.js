@@ -40,7 +40,7 @@ class App extends React.Component {
     render() {
         return (
             <Router history={history}>
-            <Layout>
+            <Layout className={"global-layout"}>
                 <Sidebar />
                 <Layout className="site-layout">
                     <Header />

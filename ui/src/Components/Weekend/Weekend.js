@@ -36,10 +36,6 @@ export function WeekendDataValue(values)
 
 export class Weekend extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     static defaultProps = {
         button_add_title: 'Добавить отпуск'
     }

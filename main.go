@@ -63,7 +63,7 @@ func runWebServer(port string, config *domain.Config) {
 	router.Handle("/api/team/{teamId}/tasks/{taskId}", API.TaskDelete()).Methods(http.MethodDelete)
 	router.Use(mux.CORSMethodMiddleware(router))
 
-	fmt.Println("Directory UI: ", uiFolder)
+	fmt.Println("Directory UI: ", *uiFolder)
 	spaHandler := api.SpaHandler{StaticPath: *uiFolder, IndexPath: "index.html"}
 	router.PathPrefix("/").Handler(spaHandler)
 
@@ -80,6 +80,7 @@ func runWebServer(port string, config *domain.Config) {
 }
 
 func main() {
+	fmt.Println("Config file: ", *configFile)
 	configStorage := storage.NewConfigFile(*configFile)
 	config, err := configStorage.Load()
 	if err != nil {
@@ -113,7 +114,7 @@ func main() {
 		for tick := range ticker.C {
 			now := tick.In(time.Local)
 			for _, team := range config.Teams {
-				log.Info("Process team", team.Title)
+				log.Info("Process team ", team.Title)
 				err := processor.ProcessTeamTasks(team, now)
 				if err != nil {
 					log.Error("Task error ", err)

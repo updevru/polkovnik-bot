@@ -27,6 +27,10 @@ type Interface interface {
 }
 
 func New(tracker *domain.IssueTracker) (Interface, error) {
+	if len(tracker.Type) == 0 {
+		return nil, errors.New("tracker type not defined")
+	}
+
 	var IssueTracker Interface
 	switch tracker.Type {
 	case JiraTrackerTape:
