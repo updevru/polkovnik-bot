@@ -57,6 +57,20 @@ class TaskListPage extends React.Component{
         });
     }
 
+    /**
+     * Добавляет ведущий ноль к минутам если нужно
+     * @param minutes
+     * @returns {string|*}
+     */
+    renderMinutes(minutes)
+    {
+        if (minutes < 10) {
+            return  "0" + minutes
+        }
+
+        return minutes;
+    }
+
     getColumns() {
         return [
             {
@@ -77,7 +91,7 @@ class TaskListPage extends React.Component{
 
                             return (<Tag>{day}</Tag>)
                         })}
-                        в <Tag>{record.schedule_hour}:{record.schedule_minute}</Tag>
+                        в <Tag>{record.schedule_hour}:{this.renderMinutes(record.schedule_minute)}</Tag>
                     </div>
                 )
             },

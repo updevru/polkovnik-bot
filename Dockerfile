@@ -18,9 +18,12 @@ LABEL maintainer="Ladygin Sergey <sladygin@updev.ru>"
 
 EXPOSE 8080
 
+RUN apk update && \
+    apk add --no-cache tzdata
 RUN mkdir -p /app/ui && mkdir -p /app/var
 
 COPY --from=builder /app/main /app/main
+COPY --from=builder /app/templates /app/templates
 COPY --from=static /ui/build /app/ui/build
 
 WORKDIR /app
