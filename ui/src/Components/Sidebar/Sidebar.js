@@ -32,7 +32,12 @@ class Sidebar extends React.Component {
     render() {
         const { menuSelected } = this.state;
         return (
-            <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
+            <Sider trigger={null} collapsible collapsed={this.state.collapsed} style={{
+                overflow: 'auto',
+                height: '100vh',
+                position: 'fixed',
+                left: 0,
+            }}>
                 <div className="logo">PolkovnikBot</div>
                 <Menu theme="dark" mode="inline" onClick={this.handleClick} selectedKeys={[menuSelected]}>
                     <Menu.Item key="1" icon={<UserAddOutlined />}>

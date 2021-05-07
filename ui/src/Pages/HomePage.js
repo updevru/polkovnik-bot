@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, List, Spin } from 'antd';
-import {UserOutlined, BarsOutlined, SettingOutlined} from '@ant-design/icons';
+import {Card, List, Spin, Row, Col, PageHeader, Button} from 'antd';
+import {UserOutlined, BarsOutlined, SettingOutlined, PlusOutlined} from '@ant-design/icons';
 import {Link} from "react-router-dom";
 import ServerApi from "../Services/ServerApi";
 
@@ -11,9 +11,6 @@ const teamMenu = [
     {title: "Задачи", icon: <BarsOutlined />, url: function (team){
             return '/team/' + team.id + '/tasks'
     }},
-    // {title: "Расписание", icon: <CalendarOutlined />, url: function (team){
-    //     return '/team/weekend'
-    // }},
     {title: "Настройки", icon: <SettingOutlined />, url: function (team){
         return '/team/' + team.id + '/settings';
     }}
@@ -44,16 +41,18 @@ class HomePage extends React.Component{
 
     render() {
         return (
-            <div className="site-card-wrapper">
-                <Spin spinning={this.state.loading}>
-                <List
-                    grid={{
-                        gutter: 10,
-                        column: 5,
-                    }}
-                    dataSource={this.state.teams}
-                    renderItem={team => (
-                        <List.Item>
+            <PageHeader
+                title="Команды"
+                extra={[
+                    <Button type="primary">
+                        <Link to={"/team/add"}><PlusOutlined /> Добавить</Link>
+                    </Button>
+                ]}
+            >
+            <Spin spinning={this.state.loading}>
+                <Row gutter={[16, 24]}>
+                    {this.state.teams.map((team, i) => {
+                        return <Col className="gutter-row" span={6}>
                             <Card title={team.title} bodyStyle={{padding: 0}}>
                                 <List
                                     size="small"
@@ -65,11 +64,11 @@ class HomePage extends React.Component{
                                     )}
                                 />
                             </Card>
-                        </List.Item>
-                    )}
-                />
-                </Spin>
-            </div>
+                        </Col>
+                    })}
+                </Row>
+            </Spin>
+            </PageHeader>
         )
     }
 }

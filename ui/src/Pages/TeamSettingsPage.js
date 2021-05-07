@@ -57,14 +57,12 @@ class TeamSettingsPage extends React.Component{
                 onBack={() => window.history.back()}
                 title="Настройки"
             >
-                <div className={"app-form-container"}>
-                    <Spin spinning={this.state.loading}>
-                        <AlertMessage message={this.state.message} />
-                        {this.state.item &&
-                        <TeamSettingsForm value={this.state.item} onSubmit={this.handleSubmit}/>
-                        }
-                    </Spin>
-                </div>
+                <Spin spinning={this.state.loading}>
+                    <AlertMessage message={this.state.message} />
+                    {this.state.item &&
+                    <TeamSettingsForm value={this.state.item} onSubmit={this.handleSubmit}/>
+                    }
+                </Spin>
             </PageHeader>
         )
     }

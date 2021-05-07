@@ -36,6 +36,7 @@ func (j JiraTracker) GetWorkLogByDate(date time.Time, projects []string) ([]Work
 
 	options := &jira.SearchOptions{Fields: []string{"*all"}}
 	dql := fmt.Sprintf("project IN(%s) AND worklogDate = \"%s\"", strings.Join(projects, ","), dateFormatted)
+	log.Info("Jira query: ", dql)
 	issues, _, err := api.Issue.Search(dql, options)
 	if err != nil {
 		return nil, err
@@ -46,7 +47,21 @@ func (j JiraTracker) GetWorkLogByDate(date time.Time, projects []string) ([]Work
 		issueLogger := log.WithFields(log.Fields{"Ticket": issue.Key})
 		issueLogger.Info(issue.Fields.Summary)
 
-		for _, logItem := range issue.Fields.Worklog.Worklogs {
+		var workLogs []jira.WorklogRecord
+		//В самом тикете не полный wor log, если он не весь запрашиваем его отдельно весь
+		if issue.Fields.Worklog.Total > issue.Fields.Worklog.MaxResults {
+			issueLogger.Info("Load work logs by issue ", issue.ID)
+			workLogResponse, _, err := api.Issue.GetWorklogs(issue.ID)
+			if err != nil {
+				issueLogger.Error("Error get work log ", err.Error())
+				continue
+			}
+			workLogs = workLogResponse.Worklogs
+		} else {
+			workLogs = issue.Fields.Worklog.Worklogs
+		}
+
+		for _, logItem := range workLogs {
 			logTime := time.Time(*logItem.Started)
 			if dateFormatted != logTime.Format("2006/01/02") {
 				continue

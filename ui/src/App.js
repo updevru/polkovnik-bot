@@ -1,10 +1,6 @@
 import React from 'react';
 import { Router } from 'react-router-dom';
-import {
-    Route,
-    Switch,
-    Redirect
-} from "react-router-dom"
+import {Route, Switch, Redirect} from "react-router-dom"
 import './App.css';
 import {Layout} from 'antd';
 import Sidebar from './Components/Sidebar/Sidebar'
@@ -22,7 +18,7 @@ import TaskAddPage from "./Pages/TaskAddPage";
 import TaskEditPage from "./Pages/TaskEditPage";
 import TeamAddPage from "./Pages/TeamAddPage";
 
-const { Content } = Layout;
+const { Content, Footer } = Layout;
 // создаём кастомную историю
 const history = createBrowserHistory()
 
@@ -40,7 +36,7 @@ class App extends React.Component {
     render() {
         return (
             <Router history={history}>
-            <Layout className={"global-layout"}>
+            <Layout className={"global-layout"} style={{ marginLeft: 200 }}>
                 <Sidebar />
                 <Layout className="site-layout">
                     <Header />
@@ -49,8 +45,10 @@ class App extends React.Component {
                         style={{
                             margin: '24px 16px',
                             minHeight: 280,
+                            overflow: 'initial'
                         }}
                     >
+                        <div className="site-layout-background">
                         <Switch>
                             <Route history={history} path='/team/add' component={TeamAddPage} />
                             <Route history={history} path='/team/:teamId/settings' component={TeamSettingsPage} />
@@ -67,7 +65,9 @@ class App extends React.Component {
                             <Route history={history} exact path='/' component={HomePage} />
                             <Redirect to='/' />
                         </Switch>
+                        </div>
                     </Content>
+                    <Footer style={{ textAlign: 'center' }}>PolkovnikBot ©2020</Footer>
                 </Layout>
             </Layout>
             </Router>
