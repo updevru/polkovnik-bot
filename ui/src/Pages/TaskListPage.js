@@ -83,6 +83,16 @@ class TaskListPage extends React.Component{
                 )
             },
             {
+                title: 'Активен',
+                key: 'active',
+                render: (text, record) => (
+                    <span>
+                        {record.active === true && "Да"}
+                        {record.active === false && "Нет"}
+                    </span>
+                )
+            },
+            {
                 title: 'Расписание',
                 key: 'type',
                 render: (text, record) => (

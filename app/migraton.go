@@ -20,6 +20,12 @@ func Migrate(config *domain.Config) error {
 		result = true
 	}
 
+	if config.Version < 1.2 {
+		upgradeV1Dot2(config)
+		config.Version = 1.2
+		result = true
+	}
+
 	if result == true {
 		log.Info("Config migrated to version ", config.Version, " successful!")
 	}
@@ -52,6 +58,16 @@ func upgradeV1Dot1(config *domain.Config) {
 		for _, user := range team.Users {
 			if user.Active == false {
 				user.Active = true
+			}
+		}
+	}
+}
+
+func upgradeV1Dot2(config *domain.Config) {
+	for _, team := range config.Teams {
+		for _, task := range team.Tasks {
+			if task.Active == false {
+				task.Active = true
 			}
 		}
 	}

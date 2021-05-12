@@ -85,6 +85,13 @@ class TaskEditForm extends React.Component {
                 </Form.Item>
 
                 <Form.Item
+                    name="active"
+                    valuePropName="checked"
+                >
+                    <Checkbox>Активен</Checkbox>
+                </Form.Item>
+
+                <Form.Item
                     label="Выполнять по дням"
                     name="schedule_weekdays"
                 >

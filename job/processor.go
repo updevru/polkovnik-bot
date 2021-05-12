@@ -29,7 +29,7 @@ func (p Processor) ProcessTeamTasks(team *domain.Team, date time.Time) error {
 
 	for _, task := range team.Tasks {
 		if !task.IsRun(date) {
-			log.Info("Task skip ", task.Type, " last run ", task.LastRunTime)
+			log.Info("Task skip ", task.Type, " last run ", task.LastRunTime, " active ", task.Active)
 			continue
 		}
 

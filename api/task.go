@@ -20,6 +20,7 @@ type taskResponseItem struct {
 	Projects         string   `json:"projects"`
 	Message          string   `json:"message"`
 	DateModify       string   `json:"check_date_modify"`
+	Active           bool     `json:"active"`
 }
 
 type taskResponseList struct {
@@ -37,6 +38,7 @@ func createTaskResponseItem(task *domain.Task) taskResponseItem {
 		Projects:         strings.Join(task.Projects, ","),
 		Message:          task.Message,
 		DateModify:       task.DateModify,
+		Active:           task.Active,
 	}
 }
 
@@ -128,6 +130,7 @@ func (a apiHandler) TaskEdit() http.Handler {
 			strings.Split(request.Projects, ","),
 			request.Message,
 			request.DateModify,
+			request.Active,
 		)
 		if err != nil {
 			renderJson(w, http.StatusBadRequest, &ResponseError{Error: err.Error()})

@@ -38,6 +38,7 @@ func (s Schedule) GetStartTime(date time.Time) *time.Time {
 
 type Task struct {
 	Id               string
+	Active           bool
 	Schedule         *Schedule
 	LastRunTime      time.Time
 	Type             string   `validate:"required"`
@@ -106,6 +107,7 @@ func NewTask(typeTask string, scheduleWeekDays []string, scheduleHour int, sched
 			Hour:     scheduleHour,
 			Minute:   scheduleMinute,
 		},
+		Active:     true,
 		Type:       typeTask,
 		Projects:   projects,
 		Message:    message,
@@ -113,7 +115,7 @@ func NewTask(typeTask string, scheduleWeekDays []string, scheduleHour int, sched
 	}, nil
 }
 
-func (t *Task) Edit(typeTask string, scheduleWeekDays []string, scheduleHour int, scheduleMinute int, projects []string, message string, dateModify string) error {
+func (t *Task) Edit(typeTask string, scheduleWeekDays []string, scheduleHour int, scheduleMinute int, projects []string, message string, dateModify string, active bool) error {
 	err := validateTask(typeTask, scheduleWeekDays, scheduleHour, scheduleMinute, projects, message, dateModify)
 	if err != nil {
 		return err
@@ -126,11 +128,16 @@ func (t *Task) Edit(typeTask string, scheduleWeekDays []string, scheduleHour int
 	t.Schedule.Minute = scheduleMinute
 	t.Schedule.Hour = scheduleHour
 	t.DateModify = dateModify
+	t.Active = active
 
 	return nil
 }
 
 func (t Task) IsRun(date time.Time) bool {
+	if t.Active == false {
+		return false
+	}
+
 	next := t.Schedule.GetStartTime(date)
 	if next == nil {
 		return false
