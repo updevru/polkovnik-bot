@@ -21,7 +21,7 @@ EXPOSE 8080
 
 RUN apk update && \
     apk add --no-cache tzdata
-RUN mkdir -p /app/ui && mkdir -p /app/var
+RUN mkdir -p /app/var
 
 COPY --from=builder /app/main /app/main
 
