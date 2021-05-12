@@ -46,5 +46,4 @@ docker run updev/polkovnik-bot -v ./config.json:/app/var/config.json -p 8080:808
 -c string Config file (default "./var/config.json")
 -o Send logs to stdout
 -p HTTP port for UI (default 8080)
--u Folder with UI (default "./ui/build")
 ```

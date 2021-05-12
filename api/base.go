@@ -1,10 +1,11 @@
 package api
 
 import (
+	"embed"
 	"encoding/json"
+	"io/fs"
 	"net/http"
 	"os"
-	"path/filepath"
 	"polkovnik/domain"
 	"polkovnik/repository"
 	"time"
@@ -82,23 +83,20 @@ func renderJson(w http.ResponseWriter, status int, data interface{}) {
 type SpaHandler struct {
 	StaticPath string
 	IndexPath  string
+	Files      embed.FS
 }
 
 func (h SpaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	path := filepath.Join(h.StaticPath, filepath.FromSlash(r.URL.Path))
-	// check whether a file exists at the given path
-	_, err := os.Stat(path)
+	_, err := h.Files.Open(h.StaticPath + r.URL.Path)
+
+	//Если запрашиваемого файла нет, отдаем главную страницу. Далее отработает роутинг в JavaScript
 	if os.IsNotExist(err) {
-		// file does not exist, serve index.html
-		http.ServeFile(w, r, filepath.Join(h.StaticPath, h.IndexPath))
-		return
-	} else if err != nil {
-		// if we got an error (that wasn't that the file doesn't exist) stating the
-		// file, return a 500 internal server error and stop
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		content, _ := h.Files.ReadFile(h.StaticPath + "/" + h.IndexPath)
+		w.WriteHeader(http.StatusOK)
+		w.Write(content)
 		return
 	}
 
-	// otherwise, use http.FileServer to serve the static dir
-	http.FileServer(http.Dir(h.StaticPath)).ServeHTTP(w, r)
+	contentStatic, _ := fs.Sub(fs.FS(h.Files), h.StaticPath)
+	http.FileServer(http.FS(contentStatic)).ServeHTTP(w, r)
 }

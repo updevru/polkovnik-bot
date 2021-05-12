@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -8,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"polkovnik/adapter/storage"
 	"polkovnik/api"
 	"polkovnik/app"
@@ -22,16 +22,18 @@ import (
 var stdout *bool
 var configFile *string
 var httpPort *string
-var uiFolder *string
+
+//go:embed templates
+var templates embed.FS
+
+//go:embed ui/build
+var UIFiles embed.FS
 
 func init() {
 
 	stdout = flag.Bool("o", false, "Send logs to stdout")
 	configFile = flag.String("c", "var/config.json", "Config file")
 	httpPort = flag.String("p", "8080", "HTTP port for UI")
-
-	folder, _ := os.Getwd()
-	uiFolder = flag.String("u", folder+filepath.FromSlash("/ui/build"), "Folder with UI")
 	flag.Parse()
 
 	log.SetFormatter(&log.TextFormatter{})
@@ -63,8 +65,7 @@ func runWebServer(port string, config *domain.Config) {
 	router.Handle("/api/team/{teamId}/tasks/{taskId}", API.TaskDelete()).Methods(http.MethodDelete)
 	router.Use(mux.CORSMethodMiddleware(router))
 
-	fmt.Println("Directory UI: ", *uiFolder)
-	spaHandler := api.SpaHandler{StaticPath: *uiFolder, IndexPath: "index.html"}
+	spaHandler := api.SpaHandler{StaticPath: "ui/build", IndexPath: "index.html", Files: UIFiles}
 	router.PathPrefix("/").Handler(spaHandler)
 
 	server := http.Server{
@@ -95,7 +96,7 @@ func main() {
 	}
 
 	processor := job.Processor{
-		Tpl: app.NewTemplateEngine("templates"),
+		Tpl: app.NewTemplateEngine("templates", templates),
 	}
 
 	signals := make(chan os.Signal, 1)

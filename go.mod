@@ -1,6 +1,6 @@
 module polkovnik
 
-go 1.15
+go 1.16
 
 require (
 	github.com/andygrunwald/go-jira v1.13.0
