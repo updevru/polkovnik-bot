@@ -1,6 +1,7 @@
 package issueTracker
 
 import (
+	"errors"
 	"net/url"
 	"polkovnik/domain"
 	"time"
@@ -25,21 +26,28 @@ type Interface interface {
 	GetWorkLogByDate(time time.Time, projects []string) ([]WorkLogResponse, error)
 }
 
-func New(tracker domain.IssueTracker) Interface {
+func New(tracker *domain.IssueTracker) (Interface, error) {
+	if len(tracker.Type) == 0 {
+		return nil, errors.New("tracker type not defined")
+	}
+
 	var IssueTracker Interface
 	switch tracker.Type {
 	case JiraTrackerTape:
-		host, _ := url.Parse(tracker.Settings["url"])
+		host, err := url.Parse(tracker.Settings["url"])
+		if err != nil {
+			return nil, err
+		}
 		IssueTracker = NewJira(
 			*host,
 			tracker.Settings["username"],
 			tracker.Settings["password"],
 		)
 	default:
-		panic("Tracker type not found")
+		return nil, errors.New("tracker type not found")
 	}
 
-	return IssueTracker
+	return IssueTracker, nil
 }
 
 type CalculateTeamWorkLogResponse struct {

@@ -1,5 +1,13 @@
 package domain
 
 type Config struct {
-	Teams []Team
+	Version float32
+	Teams   []*Team
+}
+
+func NewConfig() *Config {
+	return &Config{
+		Version: 1,
+		Teams:   []*Team{},
+	}
 }

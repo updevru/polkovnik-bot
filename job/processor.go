@@ -14,12 +14,22 @@ type Processor struct {
 }
 
 func (p Processor) ProcessTeamTasks(team *domain.Team, date time.Time) error {
-	tracker := issueTracker.New(team.IssueTracker)
-	channel := notifyChannel.New(team.Channel)
+	if team.Weekend.IsWeekend(date) == true {
+		log.Info("Team ", team.Title, " skip, is weekend")
+		return nil
+	}
+
+	var err error
+	tracker, err := issueTracker.New(team.IssueTracker)
+	channel, err := notifyChannel.New(team.Channel)
+
+	if err != nil {
+		return err
+	}
 
 	for _, task := range team.Tasks {
 		if !task.IsRun(date) {
-			log.Info("Task skip ", task.Type, " last run ", task.LastRunTime)
+			log.Info("Task skip ", task.Type, " last run ", task.LastRunTime, " active ", task.Active)
 			continue
 		}
 

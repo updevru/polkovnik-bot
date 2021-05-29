@@ -30,8 +30,17 @@ type WeekendInterval struct {
 }
 
 func (i WeekendInterval) IsWeekend(date time.Time) bool {
+	if date.Equal(i.Start) || date.Equal(i.End) {
+		return true
+	}
+
 	if date.After(i.Start) && date.Before(i.End) {
 		return true
 	}
+
+	if i.Start.Equal(i.End) {
+		return date.Format("2006-01-02") == i.Start.Format("2006-01-02")
+	}
+
 	return false
 }

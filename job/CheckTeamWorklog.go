@@ -39,6 +39,14 @@ func (p Processor) CheckTeamWorkLog(team *domain.Team, task *domain.Task, tracke
 
 	var data []teamMessageDataEntry
 	for _, logEntry := range logged {
+		if logEntry.User.Active == false {
+			continue
+		}
+
+		if logEntry.User.Weekend.IsWeekend(dateChek) {
+			continue
+		}
+
 		if team.MinWorkLog > logEntry.Time.Seconds() {
 			data = append(
 				data,

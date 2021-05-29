@@ -108,7 +108,7 @@ func TestSchedule_GetStartTime(t *testing.T) {
 
 func TestTask_IsRun(t1 *testing.T) {
 	type fields struct {
-		Schedule    Schedule
+		Schedule    *Schedule
 		LastRunTime time.Time
 	}
 	type args struct {
@@ -125,19 +125,19 @@ func TestTask_IsRun(t1 *testing.T) {
 		{
 			name: "First start",
 			fields: fields{
-				Schedule: Schedule{
+				Schedule: &Schedule{
 					WeekDays: []string{"Friday"},
-					Hour:     1,
+					Hour:     17,
 					Minute:   25,
 				},
 			},
-			args: args{date: time.Date(2021, 1, 1, 1, 26, 0, 0, time.Local)},
+			args: args{date: time.Date(2021, 1, 1, 17, 26, 0, 0, time.Local)},
 			want: true,
 		},
 		{
 			name: "Another day",
 			fields: fields{
-				Schedule: Schedule{
+				Schedule: &Schedule{
 					WeekDays: []string{"Thursday"},
 					Hour:     1,
 					Minute:   25,
@@ -149,7 +149,7 @@ func TestTask_IsRun(t1 *testing.T) {
 		{
 			name: "Already started at today",
 			fields: fields{
-				Schedule: Schedule{
+				Schedule: &Schedule{
 					WeekDays: []string{"Friday"},
 					Hour:     1,
 					Minute:   25,
@@ -162,7 +162,7 @@ func TestTask_IsRun(t1 *testing.T) {
 		{
 			name: "Start next day",
 			fields: fields{
-				Schedule: Schedule{
+				Schedule: &Schedule{
 					WeekDays: []string{"Friday"},
 					Hour:     1,
 					Minute:   25,
@@ -176,6 +176,7 @@ func TestTask_IsRun(t1 *testing.T) {
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
 			t := Task{
+				Active:      true,
 				Schedule:    tt.fields.Schedule,
 				LastRunTime: tt.fields.LastRunTime,
 			}
