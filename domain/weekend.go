@@ -42,5 +42,9 @@ func (i WeekendInterval) IsWeekend(date time.Time) bool {
 		return date.Format("2006-01-02") == i.Start.Format("2006-01-02")
 	}
 
+	if date.Format("2006-01-02") == i.End.Format("2006-01-02") {
+		return true
+	}
+
 	return false
 }

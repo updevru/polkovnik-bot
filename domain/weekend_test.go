@@ -56,6 +56,17 @@ func TestWeekendInterval_IsWeekend(t *testing.T) {
 			want: true,
 		},
 		{
+			name: "more_5_days_last_day_end",
+			fields: fields{
+				Start: time.Date(2021, 05, 01, 0, 0, 0, 0, time.Local),
+				End:   time.Date(2021, 05, 10, 0, 0, 0, 0, time.Local),
+			},
+			args: args{
+				date: time.Date(2021, 05, 10, 18, 0, 0, 0, time.Local),
+			},
+			want: true,
+		},
+		{
 			name: "more_5_days_end",
 			fields: fields{
 				Start: time.Date(2021, 05, 01, 0, 0, 0, 0, time.Local),
