@@ -1,8 +1,9 @@
 import React from 'react';
 import {Card, List, Spin, Row, Col, PageHeader, Button} from 'antd';
-import {UserOutlined, BarsOutlined, SettingOutlined, PlusOutlined} from '@ant-design/icons';
+import {UserOutlined, BarsOutlined, SettingOutlined, PlusOutlined, MessageOutlined} from '@ant-design/icons';
 import {Link} from "react-router-dom";
 import ServerApi from "../Services/ServerApi";
+import SendMessage from "../Components/SendMessage/SendMessage";
 
 const teamMenu = [
     {title: "Пользователи", icon: <UserOutlined />, url: function (team){
@@ -53,7 +54,7 @@ class HomePage extends React.Component{
                 <Row gutter={[16, 24]}>
                     {this.state.teams.map((team, i) => {
                         return <Col className="gutter-row" span={6}>
-                            <Card title={team.title} bodyStyle={{padding: 0}}>
+                            <Card title={team.title} bodyStyle={{padding: 0}} extra={<SendMessage teamId={team.id}/>}>
                                 <List
                                     size="small"
                                     dataSource={teamMenu}

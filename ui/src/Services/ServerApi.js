@@ -23,6 +23,20 @@ class ServerApi {
         return new ApiResource(this.restUrl, 'team/' + teamId + '/tasks');
     }
 
+    async sendTeamMessage(teamId, text) {
+        return fetch(
+            this.restUrl + '/team/' + teamId + '/sendMessage',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify({"Text": text})
+            }
+        ).then(response => response.json());
+    }
+
+
     /**
      * Форматирует дату для API в формат 2020-04-16T05:26:33
      * @returns string|null
