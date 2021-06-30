@@ -8,7 +8,7 @@ const { RangePicker } = DatePicker;
 
 export function WeekendFormValue (result)
 {
-    if (typeof result.weekend.intervals === "object" && result.weekend.intervals) {
+    if (result && 'weekend' in result && typeof result.weekend.intervals === "object" && result.weekend.intervals) {
         result.weekend.intervals = result.weekend.intervals.map(function (row){
             if ('start' in row) {
                 return [moment(row.start, 'DD-MM-YYYY'), moment(row.end, 'DD-MM-YYYY')]
