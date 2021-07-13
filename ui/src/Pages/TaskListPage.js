@@ -2,7 +2,7 @@ import React from 'react';
 import {Table, Tag, Space, PageHeader, Button, Modal, Spin} from 'antd';
 import ServerApi from "../Services/ServerApi";
 import {Link} from "react-router-dom";
-import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, PlusOutlined, HistoryOutlined} from "@ant-design/icons";
 import Dictionary from "../Services/Dictionary";
 
 const { confirm } = Modal;
@@ -115,6 +115,9 @@ class TaskListPage extends React.Component{
                 key: 'action',
                 render: (text, record) => (
                     <Space size="middle">
+                        <Button type="">
+                            <Link to={"/team/" + this.getTeamId() + "/tasks/" + record.id + "/history"}><HistoryOutlined /></Link>
+                        </Button>
                         <Button type="primary">
                             <Link to={"/team/" + this.getTeamId() + "/tasks/edit/" + record.id}><EditOutlined /> Редактировать</Link>
                         </Button>

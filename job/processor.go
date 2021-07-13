@@ -6,6 +6,7 @@ import (
 	"polkovnik/adapter/notifyChannel"
 	"polkovnik/app"
 	"polkovnik/domain"
+	"polkovnik/repository"
 	"time"
 )
 
@@ -13,7 +14,7 @@ type Processor struct {
 	Tpl *app.TemplateEngine
 }
 
-func (p Processor) ProcessTeamTasks(team *domain.Team, date time.Time) error {
+func (p Processor) ProcessTeamTasks(team *domain.Team, history *repository.HistoryRepository, date time.Time) error {
 	if team.Weekend.IsWeekend(date) == true {
 		log.Info("Team ", team.Title, " skip, is weekend")
 		return nil
@@ -34,21 +35,29 @@ func (p Processor) ProcessTeamTasks(team *domain.Team, date time.Time) error {
 		}
 
 		log.Info("Task start ", task.Type)
+		story := domain.NewHistory(task.Id)
 
 		var err error
 		switch task.Type {
 		case domain.CheckTeamWorkLog:
-			err = p.CheckTeamWorkLog(team, task, tracker, date, channel)
+			err = p.CheckTeamWorkLog(team, task, story, tracker, date, channel)
 		case domain.SendTeamMessage:
-			err = p.SendTeamMessage(team, task, channel)
+			err = p.SendTeamMessage(team, task, story, channel)
 		}
 
 		if err != nil {
+			story.SetError()
+			story.AddLine("Error: " + err.Error())
+			history.New(story)
 			return err
 		}
 
 		task.LastRunTime = time.Now().In(time.Local)
 		log.Info("Task end ", task.Type)
+		story.SetSuccess()
+		story.AddLine("Task completed")
+
+		return history.New(story)
 	}
 
 	return nil

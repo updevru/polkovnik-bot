@@ -20,6 +20,7 @@ import (
 
 var stdout *bool
 var configFile *string
+var dbFile *string
 var httpPort *string
 
 //go:embed templates
@@ -32,6 +33,7 @@ func init() {
 
 	stdout = flag.Bool("o", false, "Send logs to stdout")
 	configFile = flag.String("c", "var/config.json", "Config file")
+	dbFile = flag.String("db", "var/data.db", "Database file")
 	httpPort = flag.String("p", "8080", "HTTP port for UI")
 	flag.Parse()
 
@@ -42,8 +44,8 @@ func init() {
 	}
 }
 
-func runWebServer(port string, config *domain.Config) {
-	API := api.NewApiHandler(repository.NewRepository(config))
+func runWebServer(port string, config *domain.Config, history *repository.HistoryRepository) {
+	API := api.NewApiHandler(repository.NewRepository(config), history)
 
 	server := http.Server{
 		Addr:    ":" + port,
@@ -65,6 +67,14 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+
+	fmt.Println("Database file: ", *dbFile)
+	historyStorage, err := repository.CreateHistoryRepository(*dbFile)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	defer historyStorage.Close()
 
 	err = app.Migrate(config)
 	if err != nil {
@@ -93,7 +103,7 @@ func main() {
 			now := tick.In(time.Local)
 			for _, team := range config.Teams {
 				log.Info("Process team ", team.Title)
-				err := processor.ProcessTeamTasks(team, now)
+				err := processor.ProcessTeamTasks(team, historyStorage, now)
 				if err != nil {
 					log.Error("Task error ", err)
 				}
@@ -102,7 +112,7 @@ func main() {
 	}()
 
 	fmt.Println("Running...")
-	go runWebServer(*httpPort, config)
+	go runWebServer(*httpPort, config, historyStorage)
 	<-exit
 
 	fmt.Print("Save config...")

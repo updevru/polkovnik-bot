@@ -12,12 +12,14 @@ import (
 )
 
 type apiHandler struct {
-	store *repository.Repository
+	store   *repository.Repository
+	history *repository.HistoryRepository
 }
 
-func NewApiHandler(repository *repository.Repository) *apiHandler {
+func NewApiHandler(repository *repository.Repository, history *repository.HistoryRepository) *apiHandler {
 	return &apiHandler{
-		store: repository,
+		store:   repository,
+		history: history,
 	}
 }
 

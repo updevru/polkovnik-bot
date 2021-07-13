@@ -23,6 +23,10 @@ class ServerApi {
         return new ApiResource(this.restUrl, 'team/' + teamId + '/tasks');
     }
 
+    taskHistory(teamId, taskId) {
+        return new ApiResource(this.restUrl, 'team/' + teamId + '/tasks/' + taskId + '/history');
+    }
+
     async sendTeamMessage(teamId, text) {
         return fetch(
             this.restUrl + '/team/' + teamId + '/sendMessage',
