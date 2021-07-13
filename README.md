@@ -34,7 +34,7 @@ npm run build
 **Запуск в контейнере Docker:**
 
 ```bash
-docker run updev/polkovnik-bot -v ./config.json:/app/var/config.json -p 8080:8080
+docker run updev/polkovnik-bot -v ./config.json:/app/var/config.json -v ./data.db:/app/var/data.db -p 8080:8080
 ```
 
 ## Запуск
@@ -46,6 +46,7 @@ docker run updev/polkovnik-bot -v ./config.json:/app/var/config.json -p 8080:808
 Параметры запуска:
 ```
 -c string Config file (default "./var/config.json")
+-db string Database file (default "./var/data.db")
 -o Send logs to stdout
 -p HTTP port for UI (default 8080)
 ```

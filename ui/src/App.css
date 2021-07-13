@@ -28,3 +28,9 @@
 .app-form-container form {
   max-width: 500px;
 }
+
+.log-line {
+  color: #00000073;
+  display: inline-block;
+  width: 25px;
+}
