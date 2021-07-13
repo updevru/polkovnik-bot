@@ -42,7 +42,12 @@ func (h *HistoryRepository) New(history *domain.History) error {
 func (h *HistoryRepository) GetLastByTaskId(taskId string, limit int, offset int) ([]domain.History, error) {
 	var result []domain.History
 	err := h.db.View(func(tx *bolt.Tx) error {
-		c := tx.Bucket([]byte(taskId)).Cursor()
+		b := tx.Bucket([]byte(taskId))
+		if b == nil {
+			return nil
+		}
+
+		c := b.Cursor()
 
 		num := limit
 		skip := offset
@@ -76,6 +81,10 @@ func (h HistoryRepository) GetCountByTaskId(taskId string) (int, error) {
 	result := 0
 	err := h.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(taskId))
+		if b == nil {
+			return nil
+		}
+
 		b.ForEach(func(k, v []byte) error {
 			result++
 			return nil
