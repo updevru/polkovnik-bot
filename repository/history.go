@@ -6,6 +6,8 @@ import (
 	"polkovnik/domain"
 )
 
+const historyBucketName = "history"
+
 type HistoryRepository struct {
 	db *bolt.DB
 }
@@ -27,10 +29,16 @@ func (h *HistoryRepository) Close() error {
 
 func (h *HistoryRepository) New(history *domain.History) error {
 	return h.db.Update(func(tx *bolt.Tx) error {
-		b, err := tx.CreateBucketIfNotExists([]byte(history.TaskId))
+		table, err := tx.CreateBucketIfNotExists([]byte(historyBucketName))
 		if err != nil {
 			return err
 		}
+
+		b, err := table.CreateBucketIfNotExists([]byte(history.TaskId))
+		if err != nil {
+			return err
+		}
+
 		encoded, err := json.Marshal(history)
 		if err != nil {
 			return err
@@ -42,7 +50,7 @@ func (h *HistoryRepository) New(history *domain.History) error {
 func (h *HistoryRepository) GetLastByTaskId(taskId string, limit int, offset int) ([]domain.History, error) {
 	var result []domain.History
 	err := h.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(taskId))
+		b := getBucket(tx, taskId)
 		if b == nil {
 			return nil
 		}
@@ -80,7 +88,7 @@ func (h *HistoryRepository) GetLastByTaskId(taskId string, limit int, offset int
 func (h HistoryRepository) GetCountByTaskId(taskId string) (int, error) {
 	result := 0
 	err := h.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(taskId))
+		b := getBucket(tx, taskId)
 		if b == nil {
 			return nil
 		}
@@ -93,4 +101,13 @@ func (h HistoryRepository) GetCountByTaskId(taskId string) (int, error) {
 	})
 
 	return result, err
+}
+
+func getBucket(tx *bolt.Tx, subBucket string) *bolt.Bucket {
+	table := tx.Bucket([]byte(historyBucketName))
+	if table == nil {
+		return nil
+	}
+
+	return table.Bucket([]byte(subBucket))
 }

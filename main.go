@@ -15,7 +15,6 @@ import (
 	"polkovnik/job"
 	"polkovnik/repository"
 	"syscall"
-	"time"
 )
 
 var stdout *bool
@@ -44,8 +43,8 @@ func init() {
 	}
 }
 
-func runWebServer(port string, config *domain.Config, history *repository.HistoryRepository) {
-	API := api.NewApiHandler(repository.NewRepository(config), history)
+func runWebServer(port string, config *domain.Config, history *repository.HistoryRepository, processor *job.Processor) {
+	API := api.NewApiHandler(repository.NewRepository(config), history, processor)
 
 	server := http.Server{
 		Addr:    ":" + port,
@@ -82,37 +81,27 @@ func main() {
 		return
 	}
 
-	processor := job.Processor{
-		Tpl: app.NewTemplateEngine("templates", templates),
-	}
+	processor := job.NewProcessor(app.NewTemplateEngine("templates", templates), config, historyStorage)
 
 	signals := make(chan os.Signal, 1)
 	exit := make(chan bool, 1)
 
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
-	ticker := time.NewTicker(time.Minute)
 
 	go func() {
 		<-signals
-		ticker.Stop()
+		processor.Stop()
 		exit <- true
 	}()
 
-	go func() {
-		for tick := range ticker.C {
-			now := tick.In(time.Local)
-			for _, team := range config.Teams {
-				log.Info("Process team ", team.Title)
-				err := processor.ProcessTeamTasks(team, historyStorage, now)
-				if err != nil {
-					log.Error("Task error ", err)
-				}
-			}
-		}
-	}()
+	fmt.Println("Run scheduler")
+	go processor.StartScheduler()
 
-	fmt.Println("Running...")
-	go runWebServer(*httpPort, config, historyStorage)
+	fmt.Println("Run worker")
+	go processor.StartWorker()
+
+	fmt.Println("Run http server")
+	go runWebServer(*httpPort, config, historyStorage, processor)
 	<-exit
 
 	fmt.Print("Save config...")
@@ -121,6 +110,5 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println("OK")
-
 	fmt.Println("Buy.")
 }
