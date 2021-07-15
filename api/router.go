@@ -25,6 +25,7 @@ func CreateRouter(handler *apiHandler, UIFiles embed.FS) *mux.Router {
 	router.Handle("/api/team/{teamId}/tasks/{taskId}", handler.TaskEdit()).Methods(http.MethodPatch)
 	router.Handle("/api/team/{teamId}/tasks/{taskId}", handler.TaskDelete()).Methods(http.MethodDelete)
 	router.Handle("/api/team/{teamId}/tasks/{taskId}/history", handler.HistoryList()).Methods(http.MethodGet)
+	router.Handle("/api/team/{teamId}/tasks/{taskId}/run", handler.TaskRun()).Methods(http.MethodPost)
 	router.Handle("/api/team/{teamId}/sendMessage", handler.MessageSend()).Methods(http.MethodPost)
 	router.Use(mux.CORSMethodMiddleware(router))
 

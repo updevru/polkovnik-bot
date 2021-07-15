@@ -1,6 +1,6 @@
 import React from 'react';
 import {Card, List, Spin, Row, Col, PageHeader, Button} from 'antd';
-import {UserOutlined, BarsOutlined, SettingOutlined, PlusOutlined, MessageOutlined} from '@ant-design/icons';
+import {UserOutlined, BarsOutlined, SettingOutlined, PlusOutlined} from '@ant-design/icons';
 import {Link} from "react-router-dom";
 import ServerApi from "../Services/ServerApi";
 import SendMessage from "../Components/SendMessage/SendMessage";

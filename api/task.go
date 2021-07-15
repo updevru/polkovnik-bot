@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"polkovnik/domain"
 	"strings"
+	"time"
 )
 
 type taskResponseItem struct {
@@ -154,6 +155,28 @@ func (a apiHandler) TaskDelete() http.Handler {
 		}
 
 		a.store.DeleteTask(vars["teamId"], task)
+
+		renderJson(w, http.StatusOK, ResponseSuccess{Result: "ok"})
+	})
+}
+
+func (a apiHandler) TaskRun() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
+		team := a.store.GetTeam(vars["teamId"])
+		if team == nil {
+			renderJson(w, http.StatusNotFound, &ResponseError{Error: fmt.Sprintf("Team #%s not found", vars["teamId"])})
+			return
+		}
+
+		task := a.store.GetTask(vars["teamId"], vars["taskId"])
+		if task == nil {
+			renderJson(w, http.StatusNotFound, &ResponseError{Error: fmt.Sprintf("Task #%s on team #%s not found", vars["teamId"], vars["taskId"])})
+			return
+		}
+
+		a.processor.ScheduleTask(team, task, time.Now().In(time.Local))
 
 		renderJson(w, http.StatusOK, ResponseSuccess{Result: "ok"})
 	})

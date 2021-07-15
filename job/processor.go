@@ -10,37 +10,101 @@ import (
 	"time"
 )
 
-type Processor struct {
-	Tpl *app.TemplateEngine
+type messageQueue struct {
+	task *domain.Task
+	team *domain.Team
+	date time.Time
 }
 
-func (p Processor) ProcessTeamTasks(team *domain.Team, history *repository.HistoryRepository, date time.Time) error {
-	if team.Weekend.IsWeekend(date) == true {
-		log.Info("Team ", team.Title, " skip, is weekend")
-		return nil
+type Processor struct {
+	Tpl     *app.TemplateEngine
+	config  *domain.Config
+	history *repository.HistoryRepository
+	queue   chan *messageQueue
+	ticker  *time.Ticker
+	lock    map[string]string
+}
+
+func NewProcessor(tpl *app.TemplateEngine, config *domain.Config, history *repository.HistoryRepository) *Processor {
+	return &Processor{
+		Tpl:     tpl,
+		config:  config,
+		history: history,
+		lock:    make(map[string]string, 10),
 	}
+}
 
-	var err error
-	tracker, err := issueTracker.New(team.IssueTracker)
-	channel, err := notifyChannel.New(team.Channel)
+func (p *Processor) StartScheduler() {
+	p.queue = make(chan *messageQueue, 20)
+	p.ticker = time.NewTicker(time.Minute)
 
-	if err != nil {
-		return err
-	}
+	for tick := range p.ticker.C {
+		now := tick.In(time.Local)
+		for _, team := range p.config.Teams {
+			log.Info("Process team ", team.Title)
 
-	for _, task := range team.Tasks {
-		if !task.IsRun(date) {
-			log.Info("Task skip ", task.Type, " last run ", task.LastRunTime, " active ", task.Active)
-			continue
+			if team.Weekend.IsWeekend(now) == true {
+				log.Info("Team ", team.Title, " skip, is weekend")
+				continue
+			}
+
+			for _, task := range team.Tasks {
+				if !task.IsRun(now) {
+					log.Info("Task skip ", task.Type, " last run ", task.LastRunTime, " active ", task.Active)
+					continue
+				}
+
+				//Возможно задача уже выполняется или ждет своей очереди
+				if p.isLockTask(task) {
+					continue
+				}
+
+				p.lockTask(task)
+				p.ScheduleTask(team, task, now)
+			}
 		}
+	}
+}
+
+func (p *Processor) Stop() {
+	p.ticker.Stop()
+	close(p.queue)
+}
+
+func (p *Processor) ScheduleTask(team *domain.Team, task *domain.Task, date time.Time) {
+	log.Info("Task schedule ", task.Type)
+	message := &messageQueue{
+		task: task,
+		team: team,
+		date: date,
+	}
+	p.queue <- message
+}
+
+func (p *Processor) StartWorker() {
+	for message := range p.queue {
+		task := message.task
+		team := message.team
 
 		log.Info("Task start ", task.Type)
 		story := domain.NewHistory(task.Id)
 
 		var err error
+		tracker, err := issueTracker.New(team.IssueTracker)
+		channel, err := notifyChannel.New(team.Channel)
+
+		if err != nil {
+			story.SetError()
+			story.AddLine("Error: " + err.Error())
+			log.Error("Error: ", err.Error())
+			p.history.New(story)
+			p.unlockTask(task)
+			continue
+		}
+
 		switch task.Type {
 		case domain.CheckTeamWorkLog:
-			err = p.CheckTeamWorkLog(team, task, story, tracker, date, channel)
+			err = p.CheckTeamWorkLog(team, task, story, tracker, message.date, channel)
 		case domain.SendTeamMessage:
 			err = p.SendTeamMessage(team, task, story, channel)
 		}
@@ -48,8 +112,9 @@ func (p Processor) ProcessTeamTasks(team *domain.Team, history *repository.Histo
 		if err != nil {
 			story.SetError()
 			story.AddLine("Error: " + err.Error())
-			history.New(story)
-			return err
+			p.history.New(story)
+			p.unlockTask(task)
+			continue
 		}
 
 		task.LastRunTime = time.Now().In(time.Local)
@@ -57,8 +122,22 @@ func (p Processor) ProcessTeamTasks(team *domain.Team, history *repository.Histo
 		story.SetSuccess()
 		story.AddLine("Task completed")
 
-		return history.New(story)
+		p.history.New(story)
+		p.unlockTask(task)
 	}
+}
 
-	return nil
+func (p *Processor) lockTask(task *domain.Task) {
+	p.lock[task.Id] = task.Id
+}
+
+func (p *Processor) isLockTask(task *domain.Task) bool {
+	_, found := p.lock[task.Id]
+	return found
+}
+
+func (p *Processor) unlockTask(task *domain.Task) {
+	if p.isLockTask(task) {
+		delete(p.lock, task.Id)
+	}
 }

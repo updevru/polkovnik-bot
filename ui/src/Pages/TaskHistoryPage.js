@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table, Tag, Space, PageHeader, Button, Modal, Spin} from 'antd';
+import {Table, PageHeader, Spin} from 'antd';
 import ServerApi from "../Services/ServerApi";
 import {CheckCircleOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 
