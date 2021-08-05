@@ -15,11 +15,11 @@ import (
 	"polkovnik/job"
 	"polkovnik/repository"
 	"syscall"
-	"time"
 )
 
 var stdout *bool
 var configFile *string
+var dbFile *string
 var httpPort *string
 
 //go:embed templates
@@ -32,6 +32,7 @@ func init() {
 
 	stdout = flag.Bool("o", false, "Send logs to stdout")
 	configFile = flag.String("c", "var/config.json", "Config file")
+	dbFile = flag.String("db", "var/data.db", "Database file")
 	httpPort = flag.String("p", "8080", "HTTP port for UI")
 	flag.Parse()
 
@@ -42,8 +43,8 @@ func init() {
 	}
 }
 
-func runWebServer(port string, config *domain.Config) {
-	API := api.NewApiHandler(repository.NewRepository(config))
+func runWebServer(port string, config *domain.Config, history *repository.HistoryRepository, processor *job.Processor) {
+	API := api.NewApiHandler(repository.NewRepository(config), history, processor)
 
 	server := http.Server{
 		Addr:    ":" + port,
@@ -66,43 +67,41 @@ func main() {
 		return
 	}
 
+	fmt.Println("Database file: ", *dbFile)
+	historyStorage, err := repository.CreateHistoryRepository(*dbFile)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	defer historyStorage.Close()
+
 	err = app.Migrate(config)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	processor := job.Processor{
-		Tpl: app.NewTemplateEngine("templates", templates),
-	}
+	processor := job.NewProcessor(app.NewTemplateEngine("templates", templates), config, historyStorage)
 
 	signals := make(chan os.Signal, 1)
 	exit := make(chan bool, 1)
 
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
-	ticker := time.NewTicker(time.Minute)
 
 	go func() {
 		<-signals
-		ticker.Stop()
+		processor.Stop()
 		exit <- true
 	}()
 
-	go func() {
-		for tick := range ticker.C {
-			now := tick.In(time.Local)
-			for _, team := range config.Teams {
-				log.Info("Process team ", team.Title)
-				err := processor.ProcessTeamTasks(team, now)
-				if err != nil {
-					log.Error("Task error ", err)
-				}
-			}
-		}
-	}()
+	fmt.Println("Run scheduler")
+	go processor.StartScheduler()
 
-	fmt.Println("Running...")
-	go runWebServer(*httpPort, config)
+	fmt.Println("Run worker")
+	go processor.StartWorker()
+
+	fmt.Println("Run http server")
+	go runWebServer(*httpPort, config, historyStorage, processor)
 	<-exit
 
 	fmt.Print("Save config...")
@@ -111,6 +110,5 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println("OK")
-
 	fmt.Println("Buy.")
 }

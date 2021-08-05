@@ -17,6 +17,7 @@ import UserEditPage from "./Pages/UserEditPage";
 import TaskAddPage from "./Pages/TaskAddPage";
 import TaskEditPage from "./Pages/TaskEditPage";
 import TeamAddPage from "./Pages/TeamAddPage";
+import TaskHistoryPage from "./Pages/TaskHistoryPage";
 
 const { Content, Footer } = Layout;
 // создаём кастомную историю
@@ -61,6 +62,7 @@ class App extends React.Component {
 
                             <Route history={history} path='/team/:teamId/tasks/add' component={TaskAddPage} />
                             <Route history={history} path='/team/:teamId/tasks/edit/:taskId' component={TaskEditPage} />
+                            <Route history={history} path='/team/:teamId/tasks/:taskId/history' component={TaskHistoryPage} />
                             <Route history={history} path='/team/:teamId/tasks' component={TaskListPage} />
                             <Route history={history} exact path='/' component={HomePage} />
                             <Redirect to='/' />

@@ -2,7 +2,7 @@ import React from 'react';
 import {Table, Tag, Space, PageHeader, Button, Modal, Spin} from 'antd';
 import ServerApi from "../Services/ServerApi";
 import {Link} from "react-router-dom";
-import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, PlusOutlined, HistoryOutlined, CaretRightOutlined} from "@ant-design/icons";
 import Dictionary from "../Services/Dictionary";
 
 const { confirm } = Modal;
@@ -57,6 +57,18 @@ class TaskListPage extends React.Component{
         });
     }
 
+    async runTask(taskId)
+    {
+        this.setState({loading: true})
+        let response = await ServerApi.runTask(this.getTeamId(), taskId)
+        if ('error' in response) {
+            Modal.error({title: 'Произошла ошибка', content: response.error})
+        } else {
+            Modal.info({title: 'Задача запущена'})
+        }
+        this.setState({loading: false})
+    }
+
     /**
      * Добавляет ведущий ноль к минутам если нужно
      * @param minutes
@@ -73,6 +85,15 @@ class TaskListPage extends React.Component{
 
     getColumns() {
         return [
+            {
+                title: '',
+                key: 'run',
+                render: (text, record) => (
+                    <Space size="middle">
+                        <Button shape="circle" onClick={() => this.runTask(record.id)} icon={<CaretRightOutlined />} />
+                    </Space>
+                ),
+            },
             {
                 title: 'Задание',
                 key: 'type',
@@ -115,6 +136,9 @@ class TaskListPage extends React.Component{
                 key: 'action',
                 render: (text, record) => (
                     <Space size="middle">
+                        <Button type="">
+                            <Link to={"/team/" + this.getTeamId() + "/tasks/" + record.id + "/history"}><HistoryOutlined /></Link>
+                        </Button>
                         <Button type="primary">
                             <Link to={"/team/" + this.getTeamId() + "/tasks/edit/" + record.id}><EditOutlined /> Редактировать</Link>
                         </Button>

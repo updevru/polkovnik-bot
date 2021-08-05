@@ -7,17 +7,22 @@ import (
 	"net/http"
 	"os"
 	"polkovnik/domain"
+	"polkovnik/job"
 	"polkovnik/repository"
 	"time"
 )
 
 type apiHandler struct {
-	store *repository.Repository
+	store     *repository.Repository
+	history   *repository.HistoryRepository
+	processor *job.Processor
 }
 
-func NewApiHandler(repository *repository.Repository) *apiHandler {
+func NewApiHandler(repository *repository.Repository, history *repository.HistoryRepository, processor *job.Processor) *apiHandler {
 	return &apiHandler{
-		store: repository,
+		store:     repository,
+		history:   history,
+		processor: processor,
 	}
 }
 
