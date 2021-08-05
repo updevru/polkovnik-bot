@@ -38,6 +38,7 @@ class Dictionary {
     getChannelTypes() {
         return [
             {"label": "Telegram", "value": "telegram"},
+            {"label": "Webex", "value": "webex"},
         ]
     }
 }

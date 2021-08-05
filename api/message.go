@@ -23,7 +23,7 @@ func (a apiHandler) MessageSend() http.Handler {
 			return
 		}
 
-		channel, err := notifyChannel.New(team.Channel)
+		channel, err := notifyChannel.New(team.Channel, a.processor.Tpl)
 
 		if err != nil {
 			renderJson(w, http.StatusBadRequest, &ResponseError{Error: err.Error()})

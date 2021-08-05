@@ -3,7 +3,7 @@ package app
 import (
 	"bytes"
 	"embed"
-	"html/template"
+	"text/template"
 )
 
 type TemplateEngine struct {

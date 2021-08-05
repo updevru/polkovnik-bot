@@ -73,18 +73,16 @@ func (p Processor) CheckTeamWorkLog(team *domain.Team, task *domain.Task, story 
 		return nil
 	}
 
-	message, err := p.Tpl.RenderString(
-		"telegram/CheckTeamWorklog.html",
+	message, err := channel.CreateMessageFromTemplate(
+		"CheckTeamWorklog.html",
 		teamMessageData{List: data, Date: dateChek.Format("02.01.2006")},
 	)
 	if err != nil {
 		return err
 	}
 
-	story.AddLine("Send message: " + message)
-	_, err = channel.SendTeamMessage(
-		notifyChannel.Message{Text: message},
-	)
+	story.AddLine("Send message: " + message.Text)
+	_, err = channel.SendTeamMessage(message)
 	if err != nil {
 		return err
 	}

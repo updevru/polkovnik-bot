@@ -91,7 +91,7 @@ func (p *Processor) StartWorker() {
 
 		var err error
 		tracker, err := issueTracker.New(team.IssueTracker)
-		channel, err := notifyChannel.New(team.Channel)
+		channel, err := notifyChannel.New(team.Channel, p.Tpl)
 
 		if err != nil {
 			story.SetError()

@@ -18,6 +18,8 @@ type Team struct {
 	DateCreated  time.Time
 }
 
+var notifyChannelTypes = []string{"telegram", "webex"}
+
 func validateTeam(title string) error {
 
 	if len(title) == 0 {
@@ -46,7 +48,14 @@ func validateTeamSettings(title string, notifyChannelType string, notifyChannelC
 		return errors.New("title must be set")
 	}
 
-	if notifyChannelType != "telegram" {
+	var typeExist = false
+	for _, v := range notifyChannelTypes {
+		if v == notifyChannelType {
+			typeExist = true
+		}
+	}
+
+	if typeExist == false {
 		return errors.New("wrong channel type")
 	}
 

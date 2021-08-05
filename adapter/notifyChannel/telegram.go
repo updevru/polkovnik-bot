@@ -3,6 +3,7 @@ package notifyChannel
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	log "github.com/sirupsen/logrus"
+	"polkovnik/app"
 )
 
 const TelegramChannelType = "telegram"
@@ -11,6 +12,7 @@ type TelegramChannel struct {
 	token     string
 	teamGroup int64
 	api       *tgbotapi.BotAPI
+	tpl       *app.TemplateEngine
 }
 
 func (t *TelegramChannel) SendTeamMessage(message Message) (bool, error) {
@@ -27,8 +29,16 @@ func (t *TelegramChannel) SendTeamMessage(message Message) (bool, error) {
 	return true, nil
 }
 
-func NewTelegram(token string, teamGroup int64) (*TelegramChannel, error) {
+func (t *TelegramChannel) CreateMessageFromTemplate(template string, data interface{}) (Message, error) {
+	body, err := t.tpl.RenderString("telegram/"+template, data)
+
+	return Message{
+		Text: body,
+	}, err
+}
+
+func NewTelegram(token string, teamGroup int64, tpl *app.TemplateEngine) (*TelegramChannel, error) {
 	api, err := tgbotapi.NewBotAPI(token)
 
-	return &TelegramChannel{token: token, teamGroup: teamGroup, api: api}, err
+	return &TelegramChannel{token: token, teamGroup: teamGroup, api: api, tpl: tpl}, err
 }
