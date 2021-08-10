@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
 	"io/ioutil"
@@ -11,6 +12,15 @@ import (
 
 type messageRequest struct {
 	Text string `json:"text"`
+}
+
+func (m messageRequest) isValid() error {
+
+	if len(m.Text) < 1 {
+		return errors.New("message is empty")
+	}
+
+	return nil
 }
 
 func (a apiHandler) MessageSend() http.Handler {
@@ -25,25 +35,28 @@ func (a apiHandler) MessageSend() http.Handler {
 
 		channel, err := notifyChannel.New(team.Channel, a.processor.Tpl)
 
-		if err != nil {
-			renderJson(w, http.StatusBadRequest, &ResponseError{Error: err.Error()})
-		}
-
 		var request *messageRequest
 		var body []byte
 
-		body, err = ioutil.ReadAll(r.Body)
+		if err == nil {
+			body, err = ioutil.ReadAll(r.Body)
+		}
+
 		if err == nil {
 			err = json.Unmarshal(body, &request)
 		}
-		if err != nil {
-			renderJson(w, http.StatusBadRequest, &ResponseError{Error: err.Error()})
+
+		if err == nil {
+			err = request.isValid()
 		}
 
-		_, err = channel.SendTeamMessage(notifyChannel.Message{Text: request.Text})
+		if err == nil {
+			_, err = channel.SendTeamMessage(notifyChannel.Message{Text: request.Text})
+		}
 
 		if err != nil {
 			renderJson(w, http.StatusBadRequest, &ResponseError{Error: err.Error()})
+			return
 		}
 
 		renderJson(w, http.StatusOK, ResponseSuccess{Result: "Ok"})
