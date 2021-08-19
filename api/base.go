@@ -9,6 +9,7 @@ import (
 	"polkovnik/domain"
 	"polkovnik/job"
 	"polkovnik/repository"
+	"strings"
 	"time"
 )
 
@@ -107,7 +108,14 @@ type SpaHandler struct {
 }
 
 func (h SpaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	_, err := h.Files.Open(h.StaticPath + r.URL.Path)
+	path := h.StaticPath + r.URL.Path
+
+	//Если запрашивается папка, то нужно смотреть на индексный файл
+	if strings.HasSuffix(path, "/") {
+		path = path + h.IndexPath
+	}
+
+	_, err := h.Files.Open(path)
 
 	//Если запрашиваемого файла нет, отдаем главную страницу. Далее отработает роутинг в JavaScript
 	if os.IsNotExist(err) {
