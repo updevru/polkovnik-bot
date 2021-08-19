@@ -11,7 +11,6 @@ ADD . /app
 COPY --from=static /ui/build /app/ui/build
 WORKDIR /app
 RUN go mod download
-RUN go generate
 RUN CGO_ENABLED=0 GOOS=linux go build -o main
 
 ## Контейнер в котором будет находиться программа
