@@ -10,7 +10,17 @@ import (
 	"polkovnik/adapter/notifyChannel"
 )
 
+// Сообщение для отправки команде.
+// swagger:parameters MessageSend
+type messageRequestWrapper struct {
+	// in:body
+	Body messageRequest
+}
+
+// Сообщение
+// swagger:model Message
 type messageRequest struct {
+	//Текст сообщения
 	Text string `json:"text"`
 }
 
@@ -23,6 +33,14 @@ func (m messageRequest) isValid() error {
 	return nil
 }
 
+// swagger:route POST /team/{teamId}/sendMessage Messages MessageSend
+//
+// Отправка сообщения команде.
+//
+// Responses:
+//        200: ResponseSuccess
+//        400: ResponseError
+//        404: ResponseError
 func (a apiHandler) MessageSend() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)

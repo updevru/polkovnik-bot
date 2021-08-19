@@ -9,17 +9,53 @@ import (
 	"polkovnik/domain"
 )
 
-type userResponseItem struct {
-	Id       string      `json:"id"`
-	Name     string      `json:"name"`
-	Login    string      `json:"login"`
-	NickName string      `json:"nickname"`
-	Weekend  weekendItem `json:"weekend"`
-	Active   bool        `json:"active"`
+// swagger:parameters UserGet UserEdit UserDelete
+type userId struct {
+	// ID Пользователя
+	// in: path
+	// required: true
+	UserId string `json:"userId"`
 }
 
+// Участник команды
+// swagger:model User
+type userResponseItem struct {
+	Id string `json:"id"`
+	//Имя пользователя
+	Name string `json:"name"`
+	//Логин пользователя в системе задач
+	Login string `json:"login"`
+	//Ник пользователя в система чата
+	NickName string `json:"nickname"`
+	//Рабочее время пользователя
+	Weekend weekendItem `json:"weekend"`
+	//Вкл/Выкл
+	//Если включен, то участвует во всех задачах
+	Active bool `json:"active"`
+}
+
+// swagger:response User
+type userResponseItemWrapper struct {
+	// in: body
+	Body userResponseItem `json:"body"`
+}
+
+// swagger:parameters UserAdd UserEdit
+type userRequestItemWrapper struct {
+	// in: body
+	Body userResponseItem `json:"body"`
+}
+
+// Список участников команды
+// swagger:model Users
 type userResponseList struct {
 	Result []userResponseItem `json:"result"`
+}
+
+// swagger:response UserList
+type userResponseListWrapper struct {
+	// in: body
+	Body userResponseList `json:"body"`
 }
 
 func createUserResponseItem(user *domain.User) userResponseItem {
@@ -43,6 +79,13 @@ func createUserResponseItem(user *domain.User) userResponseItem {
 	}
 }
 
+// swagger:route GET /team/{teamId}/users/{userId} Users UserGet
+//
+// Информация об участнике команды.
+//
+// Responses:
+//        200: User
+//        404: ResponseError
 func (a apiHandler) UserGet() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -57,6 +100,12 @@ func (a apiHandler) UserGet() http.Handler {
 	})
 }
 
+// swagger:route GET /team/{teamId}/users Users UserList
+//
+// Список участников команды.
+//
+// Responses:
+//        200: UserList
 func (a apiHandler) UserList() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -70,6 +119,13 @@ func (a apiHandler) UserList() http.Handler {
 	})
 }
 
+// swagger:route POST /team/{teamId}/users Users UserAdd
+//
+// Создание нового участника
+//
+// Responses:
+//        200: User
+//        400: ResponseError
 func (a apiHandler) UserAdd() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -96,6 +152,14 @@ func (a apiHandler) UserAdd() http.Handler {
 	})
 }
 
+// swagger:route PATCH /team/{teamId}/users/{userId} Users UserEdit
+//
+// Изменение участника
+//
+// Responses:
+//        200: User
+//        400: ResponseError
+//        404: ResponseError
 func (a apiHandler) UserEdit() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -128,6 +192,13 @@ func (a apiHandler) UserEdit() http.Handler {
 	})
 }
 
+// swagger:route DELETE /team/{teamId}/users/{userId} Users UserDelete
+//
+// Удаление участника команды
+//
+// Responses:
+//        200: ResponseSuccess
+//        404: ResponseError
 func (a apiHandler) UserDelete() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)

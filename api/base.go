@@ -26,11 +26,19 @@ func NewApiHandler(repository *repository.Repository, history *repository.Histor
 	}
 }
 
+// Стандартное сообщение об ошибке.
+//
+// swagger:response ResponseError
 type ResponseError struct {
+	//Сообщение об ошибке
 	Error string `json:"error"`
 }
 
+// Стандартное сообщение об успешном выполнении запроса.
+//
+// swagger:response ResponseSuccess
 type ResponseSuccess struct {
+	//Результат
 	Result string `json:"result"`
 }
 
@@ -38,8 +46,12 @@ type ResponseList struct {
 	Result []interface{} `json:"result"`
 }
 
+// Выходные
+// swagger:model Weekend
 type weekendItem struct {
-	WeekDays  []string          `json:"week_days"`
+	// Выходные дни
+	WeekDays []string `json:"week_days"`
+	// Интервалы дат
 	Intervals []weekendInterval `json:"intervals"`
 }
 
@@ -52,9 +64,12 @@ func (u weekendItem) createIntervals() []domain.WeekendInterval {
 	return intervals
 }
 
+// swagger:model WeekendInterval
 type weekendInterval struct {
+	// Дата начала выходного
 	Start string `json:"start"`
-	End   string `json:"end"`
+	// Дата окончания выходного (включительно до конца дня).
+	End string `json:"end"`
 }
 
 func (i weekendInterval) createInterval() domain.WeekendInterval {

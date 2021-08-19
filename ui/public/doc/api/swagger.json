@@ -1,0 +1,949 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Бот-помощник по организации работы команды и увеличения ее эффективности.\nПозволяет выполнять определенные действия по расписанию.",
+    "title": "PolkovnikBot API.",
+    "contact": {
+      "name": "Ladygin Sergey",
+      "email": "sladygin@updev.ru"
+    },
+    "version": "1.1"
+  },
+  "basePath": "/api",
+  "paths": {
+    "/team": {
+      "get": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Список команд.",
+        "operationId": "TeamList",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TeamList"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Создание команды.",
+        "operationId": "TeamAdd",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Team"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TeamItem"
+          },
+          "400": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      }
+    },
+    "/team/{teamId}/sendMessage": {
+      "post": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Отправка сообщения команде.",
+        "operationId": "MessageSend",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          },
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ResponseSuccess"
+          },
+          "400": {
+            "$ref": "#/responses/ResponseError"
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      }
+    },
+    "/team/{teamId}/settings": {
+      "get": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Настройки команды.",
+        "operationId": "TeamsSettingsGet",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TeamsSettings"
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Teams"
+        ],
+        "summary": "Изменение настроек команды.",
+        "operationId": "TeamSettingsEdit",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/TeamsSettings"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TeamsSettings"
+          },
+          "400": {
+            "$ref": "#/responses/ResponseError"
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      }
+    },
+    "/team/{teamId}/tasks": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Список заданий команды.",
+        "operationId": "TaskList",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TaskList"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Создание задания для команды.",
+        "operationId": "TaskAdd",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          },
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Task"
+          },
+          "400": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      }
+    },
+    "/team/{teamId}/tasks/{taskId}": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Информация о задании.",
+        "operationId": "TaskGet",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "TaskId",
+            "description": "ID Задачи",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Task"
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Удаление задания.",
+        "operationId": "TaskDelete",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "TaskId",
+            "description": "ID Задачи",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ResponseSuccess"
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Изменение задания.",
+        "operationId": "TaskEdit",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "TaskId",
+            "description": "ID Задачи",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          },
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Task"
+          },
+          "400": {
+            "$ref": "#/responses/ResponseError"
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      }
+    },
+    "/team/{teamId}/tasks/{taskId}/history": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "История выполнения задания.",
+        "operationId": "TaskHistory",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "example": 30,
+            "x-go-name": "Size",
+            "description": "Элементов на страницу",
+            "name": "size",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "example": 1,
+            "x-go-name": "Page",
+            "description": "Номер страницы",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "x-go-name": "TaskId",
+            "description": "ID Задачи",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TaskHistories"
+          },
+          "400": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      }
+    },
+    "/team/{teamId}/tasks/{taskId}/run": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Запуск задания вручную.",
+        "operationId": "TaskRun",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "TaskId",
+            "description": "ID Задачи",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ResponseSuccess"
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      }
+    },
+    "/team/{teamId}/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Список участников команды.",
+        "operationId": "UserList",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UserList"
+          }
+        }
+      },
+      "post": {
+        "description": "Создание нового участника",
+        "tags": [
+          "Users"
+        ],
+        "operationId": "UserAdd",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/User"
+          },
+          "400": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      }
+    },
+    "/team/{teamId}/users/{userId}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Информация об участнике команды.",
+        "operationId": "UserGet",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-go-name": "UserId",
+            "description": "ID Пользователя",
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/User"
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Удаление участника команды.",
+        "operationId": "UserDelete",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-go-name": "UserId",
+            "description": "ID Пользователя",
+            "name": "userId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ResponseSuccess"
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      },
+      "patch": {
+        "description": "Изменение участника",
+        "tags": [
+          "Users"
+        ],
+        "operationId": "UserEdit",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "TeamId",
+            "description": "ID команды",
+            "name": "teamId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-go-name": "UserId",
+            "description": "ID Пользователя",
+            "name": "userId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/User"
+          },
+          "400": {
+            "$ref": "#/responses/ResponseError"
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Message": {
+      "description": "Сообщение",
+      "type": "object",
+      "properties": {
+        "text": {
+          "description": "Текст сообщения",
+          "type": "string",
+          "x-go-name": "Text"
+        }
+      },
+      "x-go-name": "messageRequest",
+      "x-go-package": "polkovnik/api"
+    },
+    "Task": {
+      "description": "Задача",
+      "type": "object",
+      "properties": {
+        "active": {
+          "type": "boolean",
+          "x-go-name": "Active"
+        },
+        "check_date_modify": {
+          "type": "string",
+          "x-go-name": "DateModify"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "Id"
+        },
+        "last_run_time": {
+          "type": "string",
+          "x-go-name": "LastRunTime"
+        },
+        "message": {
+          "type": "string",
+          "x-go-name": "Message"
+        },
+        "projects": {
+          "type": "string",
+          "x-go-name": "Projects"
+        },
+        "schedule_hour": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ScheduleHour"
+        },
+        "schedule_minute": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ScheduleMinute"
+        },
+        "schedule_weekdays": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "ScheduleWeekdays"
+        },
+        "type": {
+          "type": "string",
+          "x-go-name": "Type"
+        }
+      },
+      "x-go-name": "taskResponseItem",
+      "x-go-package": "polkovnik/api"
+    },
+    "TaskHistories": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TaskHistory"
+          },
+          "x-go-name": "Result"
+        },
+        "total": {
+          "description": "Количество найденных записей всего",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Total"
+        }
+      },
+      "x-go-name": "taskHistoryResponseList",
+      "x-go-package": "polkovnik/api"
+    },
+    "TaskHistory": {
+      "description": "История выполнения задания",
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "x-go-name": "Date"
+        },
+        "error": {
+          "type": "boolean",
+          "x-go-name": "Error"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "Id"
+        },
+        "logs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Logs"
+        },
+        "success": {
+          "type": "boolean",
+          "x-go-name": "Success"
+        }
+      },
+      "x-go-name": "taskHistoryResponseItem",
+      "x-go-package": "polkovnik/api"
+    },
+    "Tasks": {
+      "description": "Список задач",
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Task"
+          },
+          "x-go-name": "Result"
+        }
+      },
+      "x-go-name": "taskResponseList",
+      "x-go-package": "polkovnik/api"
+    },
+    "Team": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "x-go-name": "Id"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
+        }
+      },
+      "x-go-name": "teamResponseItem",
+      "x-go-package": "polkovnik/api"
+    },
+    "Teams": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Team"
+          },
+          "x-go-name": "Result"
+        }
+      },
+      "x-go-name": "teamResponseList",
+      "x-go-package": "polkovnik/api"
+    },
+    "TeamsSettings": {
+      "description": "Настройки команды",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "x-go-name": "Id"
+        },
+        "issue_tracker_settings": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-go-name": "IssueTrackerSettings"
+        },
+        "issue_tracker_type": {
+          "type": "string",
+          "x-go-name": "IssueTrackerType"
+        },
+        "min_work_log": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "MinWorkLog"
+        },
+        "notify_channel_channel_id": {
+          "type": "string",
+          "x-go-name": "NotifyChannelChannelId"
+        },
+        "notify_channel_settings": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-go-name": "NotifyChannelSettings"
+        },
+        "notify_channel_type": {
+          "type": "string",
+          "x-go-name": "NotifyChannelType"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
+        },
+        "weekend": {
+          "$ref": "#/definitions/Weekend"
+        }
+      },
+      "x-go-name": "teamSettingsResponseItem",
+      "x-go-package": "polkovnik/api"
+    },
+    "User": {
+      "description": "Участник команды",
+      "type": "object",
+      "properties": {
+        "active": {
+          "type": "boolean",
+          "x-go-name": "Active"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "Id"
+        },
+        "login": {
+          "type": "string",
+          "x-go-name": "Login"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "nickname": {
+          "type": "string",
+          "x-go-name": "NickName"
+        },
+        "weekend": {
+          "$ref": "#/definitions/Weekend"
+        }
+      },
+      "x-go-name": "userResponseItem",
+      "x-go-package": "polkovnik/api"
+    },
+    "Users": {
+      "description": "Список участников команды",
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          },
+          "x-go-name": "Result"
+        }
+      },
+      "x-go-name": "userResponseList",
+      "x-go-package": "polkovnik/api"
+    },
+    "Weekend": {
+      "description": "Выходные",
+      "type": "object",
+      "properties": {
+        "intervals": {
+          "description": "Интервалы дат",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/WeekendInterval"
+          },
+          "x-go-name": "Intervals"
+        },
+        "week_days": {
+          "description": "Выходные дни",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "WeekDays"
+        }
+      },
+      "x-go-name": "weekendItem",
+      "x-go-package": "polkovnik/api"
+    },
+    "WeekendInterval": {
+      "type": "object",
+      "properties": {
+        "end": {
+          "description": "Дата окончания выходного (включительно до конца дня).",
+          "type": "string",
+          "x-go-name": "End"
+        },
+        "start": {
+          "description": "Дата начала выходного",
+          "type": "string",
+          "x-go-name": "Start"
+        }
+      },
+      "x-go-name": "weekendInterval",
+      "x-go-package": "polkovnik/api"
+    }
+  },
+  "responses": {
+    "ResponseError": {
+      "description": "Стандартное сообщение об ошибке.",
+      "headers": {
+        "error": {
+          "type": "string",
+          "description": "Сообщение об ошибке"
+        }
+      }
+    },
+    "ResponseSuccess": {
+      "description": "Стандартное сообщение об успешном выполнении запроса.",
+      "headers": {
+        "result": {
+          "type": "string",
+          "description": "Результат"
+        }
+      }
+    },
+    "Task": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/Task"
+      }
+    },
+    "TaskHistories": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/TaskHistories"
+      }
+    },
+    "TaskList": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/Tasks"
+      }
+    },
+    "TeamItem": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/Team"
+      }
+    },
+    "TeamList": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/Teams"
+      }
+    },
+    "TeamsSettings": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/TeamsSettings"
+      }
+    },
+    "User": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/User"
+      }
+    },
+    "UserList": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/Users"
+      }
+    }
+  }
+}

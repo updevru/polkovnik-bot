@@ -17,6 +17,8 @@ import (
 	"syscall"
 )
 
+//go:generate swagger generate spec -o ./ui/public/doc/api/swagger.json
+
 var stdout *bool
 var configFile *string
 var dbFile *string

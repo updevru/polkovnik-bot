@@ -9,6 +9,8 @@ import (
 	"polkovnik/domain"
 )
 
+// Настройки команды
+// swagger:model TeamsSettings
 type teamSettingsResponseItem struct {
 	Id                     string            `json:"id"`
 	Title                  string            `json:"title"`
@@ -19,6 +21,18 @@ type teamSettingsResponseItem struct {
 	IssueTrackerSettings   map[string]string `json:"issue_tracker_settings"`
 	MinWorkLog             int               `json:"min_work_log"`
 	Weekend                weekendItem       `json:"weekend"`
+}
+
+// swagger:response TeamsSettings
+type teamSettingsResponseItemWrapper struct {
+	// in: body
+	Body teamSettingsResponseItem `json:"body"`
+}
+
+// swagger:parameters TeamSettingsEdit
+type teamSettingsRequestItemWrapper struct {
+	// in: body
+	Body teamSettingsResponseItem `json:"body"`
 }
 
 func createTeamSettingsResponseItem(team *domain.Team) teamSettingsResponseItem {
@@ -54,6 +68,13 @@ func createTeamSettingsResponseItem(team *domain.Team) teamSettingsResponseItem 
 	return result
 }
 
+// swagger:route GET /team/{teamId}/settings Teams TeamsSettingsGet
+//
+// Настройки команды.
+//
+// Responses:
+//        200: TeamsSettings
+//        404: ResponseError
 func (a apiHandler) TeamSettingsGet() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -68,6 +89,14 @@ func (a apiHandler) TeamSettingsGet() http.Handler {
 	})
 }
 
+// swagger:route POST /team/{teamId}/settings Teams TeamSettingsEdit
+//
+// Изменение настроек команды.
+//
+// Responses:
+//        200: TeamsSettings
+//        404: ResponseError
+//        400: ResponseError
 func (a apiHandler) TeamSettingsEdit() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)

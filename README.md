@@ -14,6 +14,7 @@
 - Интеграция с такс трекерами - Jira
 - Интеграция с чатами - Telegram, Webex
 - Управление через web интерфейс
+- API
 
 ## Установка
 
@@ -50,3 +51,7 @@ docker run updev/polkovnik-bot -v ./config.json:/app/var/config.json -v ./data.d
 -o Send logs to stdout
 -p HTTP port for UI (default 8080)
 ```
+
+## Документация API
+
+После запуска зайти по адресу /doc/api/

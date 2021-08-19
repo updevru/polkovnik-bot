@@ -7,6 +7,20 @@ import (
 	"strconv"
 )
 
+// swagger:parameters TaskHistory
+type taskHistoryRequest struct {
+	// Элементов на страницу
+	// in: query
+	// example: 30
+	Size int `json:"size"`
+	// Номер страницы
+	// in: query
+	// example: 1
+	Page int `json:"page"`
+}
+
+// История выполнения задания
+// swagger:model TaskHistory
 type taskHistoryResponseItem struct {
 	Id      string   `json:"id"`
 	Date    string   `json:"date"`
@@ -15,9 +29,17 @@ type taskHistoryResponseItem struct {
 	Error   bool     `json:"error"`
 }
 
+// swagger:model TaskHistories
 type taskHistoryResponseList struct {
 	Result []taskHistoryResponseItem `json:"result"`
-	Total  int                       `json:"total"`
+	//Количество найденных записей всего
+	Total int `json:"total"`
+}
+
+// swagger:response TaskHistories
+type taskHistoryResponseListWrapper struct {
+	// in: body
+	Body taskHistoryResponseList `json:"body"`
 }
 
 func createTaskHistoryResponseItem(row domain.History) taskHistoryResponseItem {
@@ -30,6 +52,13 @@ func createTaskHistoryResponseItem(row domain.History) taskHistoryResponseItem {
 	}
 }
 
+// swagger:route GET /team/{teamId}/tasks/{taskId}/history Tasks TaskHistory
+//
+// История выполнения задания.
+//
+// Responses:
+//        200: TaskHistories
+//        400: ResponseError
 func (a apiHandler) HistoryList() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
