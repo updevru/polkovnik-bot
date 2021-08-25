@@ -107,6 +107,8 @@ func (p *Processor) StartWorker() {
 			err = p.CheckTeamWorkLog(team, task, story, tracker, message.date, channel)
 		case domain.SendTeamMessage:
 			err = p.SendTeamMessage(team, task, story, channel)
+		case domain.CheckUserWeekend:
+			err = p.CheckUserWeekend(team, task, story, channel, message.date)
 		}
 
 		if err != nil {

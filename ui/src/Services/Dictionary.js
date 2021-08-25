@@ -2,7 +2,8 @@ class Dictionary {
     getTaskTypes() {
         return [
             {"value": "check_work_log", "label": "Проверка списания времени"},
-            {"value": "send_team_message", "label": "Отправка сообщения команде"}
+            {"value": "send_team_message", "label": "Отправка сообщения команде"},
+            {"value": "check_user_weekend", "label": "Уведомление об отпусках"}
         ]
     }
 

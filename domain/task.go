@@ -8,6 +8,9 @@ import (
 
 const CheckTeamWorkLog = "check_work_log"
 const SendTeamMessage = "send_team_message"
+const CheckUserWeekend = "check_user_weekend"
+
+var taskTypes = []string{CheckTeamWorkLog, SendTeamMessage, CheckUserWeekend}
 
 type Schedule struct {
 	WeekDays []string
@@ -50,8 +53,16 @@ type Task struct {
 }
 
 func validateTask(typeTask string, scheduleWeekDays []string, scheduleHour int, scheduleMinute int, projects []string, message string, dateModify string) error {
-	if typeTask != CheckTeamWorkLog && typeTask != SendTeamMessage {
-		return errors.New("invalid task")
+
+	var typeExist = false
+	for _, v := range taskTypes {
+		if v == typeTask {
+			typeExist = true
+		}
+	}
+
+	if typeExist == false {
+		return errors.New("wrong task type")
 	}
 
 	if len(scheduleWeekDays) == 0 {

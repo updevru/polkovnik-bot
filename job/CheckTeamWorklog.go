@@ -81,7 +81,8 @@ func (p Processor) CheckTeamWorkLog(team *domain.Team, task *domain.Task, story 
 		return err
 	}
 
-	story.AddLine("Send message: " + message.Text)
+	story.AddLine("Send message:")
+	story.AddLine(message.Text)
 	_, err = channel.SendTeamMessage(message)
 	if err != nil {
 		return err

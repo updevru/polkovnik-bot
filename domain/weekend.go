@@ -1,6 +1,8 @@
 package domain
 
-import "time"
+import (
+	"time"
+)
 
 type Weekend struct {
 	WeekDays  []string
@@ -15,6 +17,11 @@ func (w Weekend) IsWeekend(date time.Time) bool {
 		}
 	}
 
+	return w.IsHoliday(date)
+}
+
+// IsHoliday В отпуске ли на указанную дату или нет
+func (w Weekend) IsHoliday(date time.Time) bool {
 	for _, interval := range w.Intervals {
 		if interval.IsWeekend(date) {
 			return true

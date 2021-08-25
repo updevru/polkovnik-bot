@@ -74,8 +74,8 @@ type weekendInterval struct {
 }
 
 func (i weekendInterval) createInterval() domain.WeekendInterval {
-	start, _ := time.Parse("02-01-2006", i.Start)
-	end, _ := time.Parse("02-01-2006", i.End)
+	start, _ := time.ParseInLocation("02-01-2006", i.Start, time.Local)
+	end, _ := time.ParseInLocation("02-01-2006", i.End, time.Local)
 
 	return domain.WeekendInterval{
 		Start: start,

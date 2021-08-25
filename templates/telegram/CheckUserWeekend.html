@@ -1,0 +1,3 @@
+<b>Уведомление об отпусках на {{ .Date }}:</b>
+{{if gt .CountStart 0}}{{if eq .CountStart 1}}Уходит{{else}}Уходят{{ end }} в отпуск: {{ with .HolidayStart }}{{ range . }}@{{ .User.NickName }} {{ end }}{{ end }}{{ end }}
+{{if gt .CountEnd 0}}{{if eq .CountEnd 1}}Возвращается{{else}}Возвращаются{{ end }} из отпуска: {{ with .HolidayEnd }}{{ range . }}@{{ .User.NickName }} {{ end }}{{ end }}{{ end }}

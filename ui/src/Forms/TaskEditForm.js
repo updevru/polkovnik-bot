@@ -56,6 +56,19 @@ class TaskEditForm extends React.Component {
         </span>)
     }
 
+    checkUserWeekendRender() {
+        return (<span>
+            <Form.Item
+                label="Проверить на дату"
+                extra="Примеры 24h, 72h"
+                name="check_date_modify"
+                rules={[{ required: true, message: 'Не должно быть пустым' }]}
+            >
+                    <Input/>
+                </Form.Item>
+        </span>)
+    }
+
     sendTeamMessageRender() {
         return (<span>
             <Form.Item
@@ -116,6 +129,7 @@ class TaskEditForm extends React.Component {
 
                 {this.state.type && this.state.type === "check_work_log" && this.checkWorkLogRender()}
                 {this.state.type && this.state.type === "send_team_message" && this.sendTeamMessageRender()}
+                {this.state.type && this.state.type === "check_user_weekend" && this.checkUserWeekendRender()}
 
                 <Form.Item>
                     <Button type="primary" htmlType="submit">
