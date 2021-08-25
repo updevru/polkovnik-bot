@@ -1,21 +1,25 @@
 package repository
 
 import (
-	"encoding/json"
-	bolt "go.etcd.io/bbolt"
+	"errors"
+	storm "github.com/asdine/storm/v3"
+	"github.com/asdine/storm/v3/q"
 	"polkovnik/domain"
 )
 
-const historyBucketName = "history"
-
 type HistoryRepository struct {
-	db *bolt.DB
+	db *storm.DB
 }
 
 func CreateHistoryRepository(path string) (*HistoryRepository, error) {
-	db, err := bolt.Open(path, 0666, nil)
+	db, err := storm.Open(path)
+
+	if err == nil {
+		err = db.Init(domain.History{})
+	}
+
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Repository error on open db: " + err.Error())
 	}
 
 	return &HistoryRepository{
@@ -28,86 +32,33 @@ func (h *HistoryRepository) Close() error {
 }
 
 func (h *HistoryRepository) New(history *domain.History) error {
-	return h.db.Update(func(tx *bolt.Tx) error {
-		table, err := tx.CreateBucketIfNotExists([]byte(historyBucketName))
-		if err != nil {
-			return err
-		}
-
-		b, err := table.CreateBucketIfNotExists([]byte(history.TaskId))
-		if err != nil {
-			return err
-		}
-
-		encoded, err := json.Marshal(history)
-		if err != nil {
-			return err
-		}
-		return b.Put([]byte(history.Id), encoded)
-	})
+	err := h.db.Save(history)
+	if err != nil {
+		return errors.New("Repository error on save: " + err.Error())
+	}
+	return nil
 }
 
 func (h *HistoryRepository) GetLastByTaskId(taskId string, limit int, offset int) ([]domain.History, error) {
 	var result []domain.History
-	err := h.db.View(func(tx *bolt.Tx) error {
-		b := getBucket(tx, taskId)
-		if b == nil {
-			return nil
-		}
 
-		c := b.Cursor()
+	query := h.db.Select(q.And(q.Eq("TaskId", taskId))).OrderBy("Date").Reverse().Limit(limit).Skip(offset)
+	err := query.Find(&result)
 
-		num := limit
-		skip := offset
-		for k, v := c.Last(); k != nil; k, v = c.Prev() {
-			if skip > 0 {
-				skip--
-				continue
-			}
+	if err != nil && err != storm.ErrNotFound {
+		return result, errors.New("Repository error on GetLastByTaskId: " + err.Error())
+	}
 
-			var item domain.History
-			err := json.Unmarshal(v, &item)
-			if err != nil {
-				return err
-			}
-
-			result = append(result, item)
-
-			num--
-			if num == 0 {
-				break
-			}
-		}
-
-		return nil
-	})
-
-	return result, err
+	return result, nil
 }
 
 func (h HistoryRepository) GetCountByTaskId(taskId string) (int, error) {
-	result := 0
-	err := h.db.View(func(tx *bolt.Tx) error {
-		b := getBucket(tx, taskId)
-		if b == nil {
-			return nil
-		}
+	query := h.db.Select(q.And(q.Eq("TaskId", taskId)))
+	result, err := query.Count(domain.History{})
 
-		b.ForEach(func(k, v []byte) error {
-			result++
-			return nil
-		})
-		return nil
-	})
-
-	return result, err
-}
-
-func getBucket(tx *bolt.Tx, subBucket string) *bolt.Bucket {
-	table := tx.Bucket([]byte(historyBucketName))
-	if table == nil {
-		return nil
+	if err != nil {
+		return 0, errors.New("Repository error on GetCountByTaskId: " + err.Error())
 	}
 
-	return table.Bucket([]byte(subBucket))
+	return result, nil
 }

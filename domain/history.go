@@ -13,9 +13,9 @@ const (
 )
 
 type History struct {
-	Id     string
-	Date   time.Time
-	TaskId string
+	Id     string    `storm:"id"`
+	Date   time.Time `storm:"index"`
+	TaskId string    `storm:"index"`
 	Logs   []string
 	Status historyStatus
 }

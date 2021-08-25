@@ -2,7 +2,7 @@ import React from 'react';
 import { Router } from 'react-router-dom';
 import {Route, Switch, Redirect} from "react-router-dom"
 import './App.css';
-import {Layout} from 'antd';
+import {Layout, Space} from 'antd';
 import Sidebar from './Components/Sidebar/Sidebar'
 import Header from './Components/Header/Header'
 import HomePage from "./Pages/HomePage";
@@ -22,6 +22,8 @@ import TaskHistoryPage from "./Pages/TaskHistoryPage";
 const { Content, Footer } = Layout;
 // создаём кастомную историю
 const history = createBrowserHistory()
+
+const version = "1.2"
 
 class App extends React.Component {
     state = {
@@ -69,7 +71,14 @@ class App extends React.Component {
                         </Switch>
                         </div>
                     </Content>
-                    <Footer style={{ textAlign: 'center' }}>PolkovnikBot ©2020</Footer>
+                    <Footer style={{ textAlign: 'center' }}>
+                        <Space>
+                            PolkovnikBot ©2020
+                            <a href={"/doc/api/"} target={"_blank"}>API</a>
+                            <a href={"https://github.com/updevru/polkovnik-bot"} target={"_blank"}>Github</a>
+                            Версия: {version}
+                        </Space>
+                    </Footer>
                 </Layout>
             </Layout>
             </Router>

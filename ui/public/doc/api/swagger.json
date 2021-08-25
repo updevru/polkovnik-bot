@@ -16,7 +16,7 @@
       "name": "Ladygin Sergey",
       "email": "sladygin@updev.ru"
     },
-    "version": "1.1"
+    "version": "1.2"
   },
   "basePath": "/api",
   "paths": {
@@ -500,10 +500,10 @@
         }
       },
       "delete": {
+        "description": "Удаление участника команды",
         "tags": [
           "Users"
         ],
-        "summary": "Удаление участника команды.",
         "operationId": "UserDelete",
         "parameters": [
           {
@@ -715,10 +715,12 @@
       "type": "object",
       "properties": {
         "id": {
+          "description": "ID команды",
           "type": "string",
           "x-go-name": "Id"
         },
         "title": {
+          "description": "Название команды",
           "type": "string",
           "x-go-name": "Title"
         }
@@ -795,6 +797,7 @@
       "type": "object",
       "properties": {
         "active": {
+          "description": "Вкл/Выкл\nЕсли включен, то участвует во всех задачах",
           "type": "boolean",
           "x-go-name": "Active"
         },
@@ -803,14 +806,17 @@
           "x-go-name": "Id"
         },
         "login": {
+          "description": "Логин пользователя в системе задач",
           "type": "string",
           "x-go-name": "Login"
         },
         "name": {
+          "description": "Имя пользователя",
           "type": "string",
           "x-go-name": "Name"
         },
         "nickname": {
+          "description": "Ник пользователя в система чата",
           "type": "string",
           "x-go-name": "NickName"
         },

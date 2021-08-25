@@ -5,7 +5,7 @@
 //
 //     Schemes: http
 //     BasePath: /api
-//     Version: 1.1
+//     Version: 1.2
 //     Contact: Ladygin Sergey<sladygin@updev.ru>
 //
 //     Consumes:
