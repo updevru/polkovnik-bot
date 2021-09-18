@@ -41,7 +41,7 @@ class TaskEditForm extends React.Component {
         return (<span>
             <Form.Item
                 label="Проекты в сиситеме задач (через запятую)"
-                name="projects"
+                name={["settings", "projects"]}
             >
                 <Input/>
             </Form.Item>
@@ -49,10 +49,37 @@ class TaskEditForm extends React.Component {
             <Form.Item
                 label="Изменение даты проверки"
                 extra="Примеры -25h, -1.5h, 2h45m"
-                name="check_date_modify"
+                name={["settings", "date_modify"]}
             >
                     <Input/>
                 </Form.Item>
+        </span>)
+    }
+
+    checkWorkLogByPeriod() {
+        return (<span>
+            <Form.Item
+                label="Проекты в сиситеме задач (через запятую)"
+                name={["settings", "projects"]}
+            >
+                <Input/>
+            </Form.Item>
+
+            <Form.Item
+                label="Изменение даты начала проверки"
+                extra="Примеры -25h, -1.5h, 2h45m"
+                name={["settings", "start_duration"]}
+            >
+                    <Input/>
+            </Form.Item>
+
+            <Form.Item
+                label="Изменение даты окончания проверки"
+                extra="Примеры -25h, -1.5h, 2h45m"
+                name={["settings", "end_duration"]}
+            >
+                    <Input/>
+            </Form.Item>
         </span>)
     }
 
@@ -61,7 +88,7 @@ class TaskEditForm extends React.Component {
             <Form.Item
                 label="Проверить на дату"
                 extra="Примеры 24h, 72h"
-                name="check_date_modify"
+                name={["settings", "date_modify"]}
                 rules={[{ required: true, message: 'Не должно быть пустым' }]}
             >
                     <Input/>
@@ -73,7 +100,7 @@ class TaskEditForm extends React.Component {
         return (<span>
             <Form.Item
                 label="Сообщение которое будет отправлено"
-                name="message"
+                name={["settings", "message"]}
                 rules={[{ required: true, message: 'Не должно быть пустым' }]}
             >
                 <TextArea rows={4} />
@@ -128,6 +155,7 @@ class TaskEditForm extends React.Component {
                 </Form.Item>
 
                 {this.state.type && this.state.type === "check_work_log" && this.checkWorkLogRender()}
+                {this.state.type && this.state.type === "check_work_log_by_period" && this.checkWorkLogByPeriod()}
                 {this.state.type && this.state.type === "send_team_message" && this.sendTeamMessageRender()}
                 {this.state.type && this.state.type === "check_user_weekend" && this.checkUserWeekendRender()}
 

@@ -23,7 +23,7 @@ const { Content, Footer } = Layout;
 // создаём кастомную историю
 const history = createBrowserHistory()
 
-const version = "1.2"
+const version = "1.3"
 
 class App extends React.Component {
     state = {

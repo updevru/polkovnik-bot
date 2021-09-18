@@ -2,6 +2,7 @@ class Dictionary {
     getTaskTypes() {
         return [
             {"value": "check_work_log", "label": "Проверка списания времени"},
+            {"value": "check_work_log_by_period", "label": "Проверка списания времени за период"},
             {"value": "send_team_message", "label": "Отправка сообщения команде"},
             {"value": "check_user_weekend", "label": "Уведомление об отпусках"}
         ]
@@ -12,6 +13,7 @@ class Dictionary {
         this.getTaskTypes().forEach(function (item) {
             if (item.value === value) {
                 result = item
+                return
             }
         })
 

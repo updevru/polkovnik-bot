@@ -1,0 +1,4 @@
+{{ range .Periods }}
+**За {{ .Date }} не списано время по задачам!**
+{{ range .List }}<@personEmail:{{ .User.NickName }}|{{ .User.Name }}> списано только {{ .LoggedTime }}
+{{ end }}{{ end }}

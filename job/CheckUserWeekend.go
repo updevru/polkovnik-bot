@@ -1,7 +1,6 @@
 package job
 
 import (
-	"errors"
 	"fmt"
 	"polkovnik/adapter/notifyChannel"
 	"polkovnik/domain"
@@ -21,13 +20,10 @@ type jobCheckUserWeekendData struct {
 }
 
 func (p Processor) CheckUserWeekend(team *domain.Team, task *domain.Task, story *domain.History, channel notifyChannel.Interface, dateNow time.Time) error {
-	var dateChek = dateNow
-	// Если в задании есть модификатор, то применяем его
-	if len(task.DateModify) == 0 {
-		return errors.New("Не указан сдвиг для даты проверки")
-	}
+	settings := task.GetTaskCheckUserWeekendSettingsDto()
 
-	duration, err := time.ParseDuration(task.DateModify)
+	var dateChek = dateNow
+	duration, err := time.ParseDuration(settings.GetDateModifyDuration())
 	if err != nil {
 		return err
 	}

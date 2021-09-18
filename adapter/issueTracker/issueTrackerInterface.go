@@ -55,9 +55,9 @@ type CalculateTeamWorkLogResponse struct {
 	Time domain.Time
 }
 
-func CalculateTeamWorkLog(team *domain.Team, task *domain.Task, tracker Interface, date time.Time) ([]CalculateTeamWorkLogResponse, error) {
+func CalculateTeamWorkLog(team *domain.Team, projects []string, tracker Interface, date time.Time) ([]CalculateTeamWorkLogResponse, error) {
 	var result = make(map[string]int, 20)
-	logs, err := tracker.GetWorkLogByDate(date, task.Projects)
+	logs, err := tracker.GetWorkLogByDate(date, projects)
 	if err != nil {
 		return nil, err
 	}

@@ -105,6 +105,8 @@ func (p *Processor) StartWorker() {
 		switch task.Type {
 		case domain.CheckTeamWorkLog:
 			err = p.CheckTeamWorkLog(team, task, story, tracker, message.date, channel)
+		case domain.CheckTeamWorkLogByPeriod:
+			err = p.CheckTeamWorkLogByPeriod(team, task, story, tracker, message.date, channel)
 		case domain.SendTeamMessage:
 			err = p.SendTeamMessage(team, task, story, channel)
 		case domain.CheckUserWeekend:

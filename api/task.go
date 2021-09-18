@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"polkovnik/domain"
-	"strings"
 	"time"
 )
 
@@ -22,16 +21,14 @@ type taskId struct {
 // Задача
 // swagger:model Task
 type taskResponseItem struct {
-	Id               string   `json:"id"`
-	Type             string   `json:"type"`
-	ScheduleWeekdays []string `json:"schedule_weekdays"`
-	ScheduleHour     int      `json:"schedule_hour"`
-	ScheduleMinute   int      `json:"schedule_minute"`
-	LastRunTime      string   `json:"last_run_time"`
-	Projects         string   `json:"projects"`
-	Message          string   `json:"message"`
-	DateModify       string   `json:"check_date_modify"`
-	Active           bool     `json:"active"`
+	Id               string            `json:"id"`
+	Type             string            `json:"type"`
+	ScheduleWeekdays []string          `json:"schedule_weekdays"`
+	ScheduleHour     int               `json:"schedule_hour"`
+	ScheduleMinute   int               `json:"schedule_minute"`
+	LastRunTime      string            `json:"last_run_time"`
+	Active           bool              `json:"active"`
+	Settings         map[string]string `json:"settings"`
 }
 
 // swagger:response Task
@@ -66,10 +63,8 @@ func createTaskResponseItem(task *domain.Task) taskResponseItem {
 		ScheduleWeekdays: task.Schedule.WeekDays,
 		ScheduleHour:     task.Schedule.Hour,
 		ScheduleMinute:   task.Schedule.Minute,
-		Projects:         strings.Join(task.Projects, ","),
-		Message:          task.Message,
-		DateModify:       task.DateModify,
 		Active:           task.Active,
+		Settings:         task.TaskSettings,
 	}
 }
 
@@ -138,9 +133,7 @@ func (a apiHandler) TaskAdd() http.Handler {
 			request.ScheduleWeekdays,
 			request.ScheduleHour,
 			request.ScheduleMinute,
-			strings.Split(request.Projects, ","),
-			request.Message,
-			request.DateModify,
+			request.Settings,
 		)
 		if err != nil {
 			renderJson(w, http.StatusBadRequest, &ResponseError{Error: err.Error()})
@@ -186,10 +179,8 @@ func (a apiHandler) TaskEdit() http.Handler {
 			request.ScheduleWeekdays,
 			request.ScheduleHour,
 			request.ScheduleMinute,
-			strings.Split(request.Projects, ","),
-			request.Message,
-			request.DateModify,
 			request.Active,
+			request.Settings,
 		)
 		if err != nil {
 			renderJson(w, http.StatusBadRequest, &ResponseError{Error: err.Error()})
