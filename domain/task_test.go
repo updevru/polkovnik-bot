@@ -186,3 +186,78 @@ func TestTask_IsRun(t1 *testing.T) {
 		})
 	}
 }
+
+func TestTaskCheckTeamWorkLogByPeriodSettingsDto_Validate(t1 *testing.T) {
+	type fields struct {
+		TaskSettingsDto TaskSettingsDto
+	}
+	type testCase struct {
+		name    string
+		fields  fields
+		wantErr bool
+	}
+	tests := []testCase{
+		{
+			name: "Validate OK",
+			fields: fields{
+				TaskSettingsDto: TaskSettingsDto{
+					TaskSettings: map[string]string{
+						"start_duration": "-20h",
+						"end_duration":   "-10h",
+						"projects":       "DEV",
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Validate Period error",
+			fields: fields{
+				TaskSettingsDto: TaskSettingsDto{
+					TaskSettings: map[string]string{
+						"start_duration": "-10h",
+						"end_duration":   "-20h",
+						"projects":       "DEV",
+					},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "Validate Period error",
+			fields: fields{
+				TaskSettingsDto: TaskSettingsDto{
+					TaskSettings: map[string]string{
+						"start_duration": "10h",
+						"end_duration":   "-20h",
+						"projects":       "DEV",
+					},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "Validate Period error",
+			fields: fields{
+				TaskSettingsDto: TaskSettingsDto{
+					TaskSettings: map[string]string{
+						"start_duration": "-10h",
+						"end_duration":   "20h",
+						"projects":       "DEV",
+					},
+				},
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t1.Run(tt.name, func(t1 *testing.T) {
+			t := TaskCheckTeamWorkLogByPeriodSettingsDto{
+				TaskSettingsDto: tt.fields.TaskSettingsDto,
+			}
+			if err := t.Validate(); (err != nil) != tt.wantErr {
+				t1.Errorf("Validate() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}

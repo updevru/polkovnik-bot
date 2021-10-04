@@ -192,22 +192,37 @@ func (t TaskCheckTeamWorkLogByPeriodSettingsDto) Validate() error {
 		return errors.New("projects must be set")
 	}
 
+	var err error
+	var start time.Duration
 	if len(t.GetStartDuration()) == 0 {
 		return errors.New("start_duration must be set")
 	} else {
-		_, err := time.ParseDuration(t.GetStartDuration())
+		start, err = time.ParseDuration(t.GetStartDuration())
 		if err != nil {
 			return errors.New("start_duration modify error: " + err.Error())
 		}
+
+		if start.Seconds() > 0 {
+			return errors.New("start_duration must be in the past")
+		}
 	}
 
+	var end time.Duration
 	if len(t.GetEndDuration()) == 0 {
 		return errors.New("end_duration must be set")
 	} else {
-		_, err := time.ParseDuration(t.GetEndDuration())
+		end, err = time.ParseDuration(t.GetEndDuration())
 		if err != nil {
 			return errors.New("end_duration modify error: " + err.Error())
 		}
+
+		if end.Seconds() > 0 {
+			return errors.New("end_duration must be in the past")
+		}
+	}
+
+	if start.Seconds() > end.Seconds() {
+		return errors.New("start_duration must be less than end_duration")
 	}
 
 	return nil
