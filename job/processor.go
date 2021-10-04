@@ -79,6 +79,7 @@ func (p *Processor) ScheduleTask(team *domain.Team, task *domain.Task, date time
 		date: date,
 	}
 	p.queue <- message
+	log.Info("Task queue len = ", len(p.queue))
 }
 
 func (p *Processor) StartWorker() {
