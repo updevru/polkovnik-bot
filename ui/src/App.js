@@ -74,8 +74,8 @@ class App extends React.Component {
                     <Footer style={{ textAlign: 'center' }}>
                         <Space>
                             PolkovnikBot ©2020
-                            <a href={"/doc/api/"} target={"_blank"}>API</a>
-                            <a href={"https://github.com/updevru/polkovnik-bot"} target={"_blank"}>Github</a>
+                            <a href={"/doc/api/"} target={"_blank"} rel={"noreferrer"}>API</a>
+                            <a href={"https://github.com/updevru/polkovnik-bot"} target={"_blank"} rel={"noreferrer"}>Github</a>
                             Версия: {version}
                         </Space>
                     </Footer>

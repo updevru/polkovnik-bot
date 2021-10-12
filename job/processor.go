@@ -31,11 +31,11 @@ func NewProcessor(tpl *app.TemplateEngine, config *domain.Config, history *repos
 		config:  config,
 		history: history,
 		lock:    make(map[string]string, 10),
+		queue:   make(chan *messageQueue, 20),
 	}
 }
 
 func (p *Processor) StartScheduler() {
-	p.queue = make(chan *messageQueue, 20)
 	p.ticker = time.NewTicker(time.Minute)
 
 	for tick := range p.ticker.C {
