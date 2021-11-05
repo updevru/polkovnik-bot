@@ -16,7 +16,7 @@
       "name": "Ladygin Sergey",
       "email": "sladygin@updev.ru"
     },
-    "version": "1.3"
+    "version": "1.4"
   },
   "basePath": "/api",
   "paths": {
@@ -54,6 +54,179 @@
             "$ref": "#/responses/TeamItem"
           },
           "400": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      }
+    },
+    "/team/{teamId}/receive/{receiverId}": {
+      "get": {
+        "tags": [
+          "Receivers"
+        ],
+        "summary": "Прием данных приемником (поддерживает любые методы).",
+        "operationId": "Receive",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "ReceiverId",
+            "description": "ID Приемника",
+            "name": "receiverId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ResponseSuccess"
+          },
+          "400": {
+            "$ref": "#/responses/ResponseError"
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      }
+    },
+    "/team/{teamId}/receivers": {
+      "get": {
+        "tags": [
+          "Receivers"
+        ],
+        "summary": "Список приемников команды.",
+        "operationId": "ReceiversList",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ReceiversList"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Receivers"
+        ],
+        "summary": "Создание приемника для команды.",
+        "operationId": "ReceiversAdd",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Receiver"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Receiver",
+            "schema": {
+              "$ref": "#/definitions/Receiver"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      }
+    },
+    "/team/{teamId}/receivers/{receiverId}": {
+      "get": {
+        "tags": [
+          "Receivers"
+        ],
+        "summary": "Информация о приемнике.",
+        "operationId": "ReceiversGet",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "ReceiverId",
+            "description": "ID Приемника",
+            "name": "receiverId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Receiver",
+            "schema": {
+              "$ref": "#/definitions/Receiver"
+            }
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Receivers"
+        ],
+        "summary": "Удаление приемника.",
+        "operationId": "ReceiversDelete",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "ReceiverId",
+            "description": "ID Приемника",
+            "name": "receiverId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ResponseSuccess"
+          },
+          "404": {
+            "$ref": "#/responses/ResponseError"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Receivers"
+        ],
+        "summary": "Изменение приемника.",
+        "operationId": "ReceiversEdit",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "ReceiverId",
+            "description": "ID Приемника",
+            "name": "receiverId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Receiver"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Receiver",
+            "schema": {
+              "$ref": "#/definitions/Receiver"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ResponseError"
+          },
+          "404": {
             "$ref": "#/responses/ResponseError"
           }
         }
@@ -592,6 +765,52 @@
       "x-go-name": "messageRequest",
       "x-go-package": "polkovnik/api"
     },
+    "Receiver": {
+      "description": "Приемник",
+      "type": "object",
+      "properties": {
+        "active": {
+          "type": "boolean",
+          "x-go-name": "Active"
+        },
+        "format": {
+          "type": "string",
+          "x-go-name": "Format"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "Id"
+        },
+        "settings": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-go-name": "Settings"
+        },
+        "type": {
+          "type": "string",
+          "x-go-name": "Type"
+        }
+      },
+      "x-go-name": "receiverResponseItem",
+      "x-go-package": "polkovnik/api"
+    },
+    "Receivers": {
+      "description": "Список приемников",
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Receiver"
+          },
+          "x-go-name": "Result"
+        }
+      },
+      "x-go-name": "receiverResponseList",
+      "x-go-package": "polkovnik/api"
+    },
     "Task": {
       "description": "Задача",
       "type": "object",
@@ -880,6 +1099,18 @@
     }
   },
   "responses": {
+    "ReceiversGet": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/Receiver"
+      }
+    },
+    "ReceiversList": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/Receivers"
+      }
+    },
     "ResponseError": {
       "description": "Стандартное сообщение об ошибке.",
       "headers": {

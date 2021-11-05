@@ -11,6 +11,7 @@ type Team struct {
 	Title        string
 	Users        []*User
 	Tasks        []*Task
+	Receivers    []*Receiver
 	Channel      *NotifyChannel
 	Weekend      Weekend
 	IssueTracker *IssueTracker
