@@ -18,12 +18,15 @@ import TaskAddPage from "./Pages/TaskAddPage";
 import TaskEditPage from "./Pages/TaskEditPage";
 import TeamAddPage from "./Pages/TeamAddPage";
 import TaskHistoryPage from "./Pages/TaskHistoryPage";
+import ReceiverListPage from "./Pages/ReceiverListPage";
+import ReceiverAddPage from "./Pages/ReceiverAddPage";
+import ReceiverEditPage from "./Pages/ReceiverEditPage";
 
 const { Content, Footer } = Layout;
 // создаём кастомную историю
 const history = createBrowserHistory()
 
-const version = "1.3"
+const version = "1.4"
 
 class App extends React.Component {
     state = {
@@ -66,6 +69,11 @@ class App extends React.Component {
                             <Route history={history} path='/team/:teamId/tasks/edit/:taskId' component={TaskEditPage} />
                             <Route history={history} path='/team/:teamId/tasks/:taskId/history' component={TaskHistoryPage} />
                             <Route history={history} path='/team/:teamId/tasks' component={TaskListPage} />
+
+                            <Route history={history} path='/team/:teamId/receivers/add' component={ReceiverAddPage} />
+                            <Route history={history} path='/team/:teamId/receivers/edit/:receiverId' component={ReceiverEditPage} />
+                            <Route history={history} path='/team/:teamId/receivers' component={ReceiverListPage} />
+
                             <Route history={history} exact path='/' component={HomePage} />
                             <Redirect to='/' />
                         </Switch>

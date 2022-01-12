@@ -44,6 +44,33 @@ class Dictionary {
             {"label": "Webex", "value": "webex"},
         ]
     }
+
+    getReceiverTypes() {
+        return [
+            {"label": "Отправка сообщения команде", "value": "send_team_message"},
+        ]
+    }
+
+    getReceiverType(value) {
+        let result
+        this.getReceiverTypes().forEach(function (item) {
+            if (item.value === value) {
+                result = item
+                return
+            }
+        })
+
+        return result;
+    }
+
+    getReceiverFormats() {
+        return [
+            {"label": "Автоопределение", "value": "auto"},
+            {"label": "JSON", "value": "json"},
+            {"label": "XML", "value": "xml"},
+            {"label": "Текст", "value": "text"},
+        ]
+    }
 }
 
 export default new Dictionary()

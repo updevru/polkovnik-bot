@@ -1,6 +1,6 @@
 import React from 'react';
 import {Card, List, Spin, Row, Col, PageHeader, Button} from 'antd';
-import {UserOutlined, BarsOutlined, SettingOutlined, PlusOutlined} from '@ant-design/icons';
+import {UserOutlined, BarsOutlined, SettingOutlined, PlusOutlined, ApiOutlined} from '@ant-design/icons';
 import {Link} from "react-router-dom";
 import ServerApi from "../Services/ServerApi";
 import SendMessage from "../Components/SendMessage/SendMessage";
@@ -12,6 +12,9 @@ const teamMenu = [
     {title: "Задачи", icon: <BarsOutlined />, url: function (team){
             return '/team/' + team.id + '/tasks'
     }},
+    {title: "Прием webhook", icon: <ApiOutlined />, url: function (team){
+            return '/team/' + team.id + '/receivers'
+        }},
     {title: "Настройки", icon: <SettingOutlined />, url: function (team){
         return '/team/' + team.id + '/settings';
     }}

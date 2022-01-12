@@ -1,18 +1,15 @@
 package api
 
 import (
-	"bytes"
 	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"polkovnik/adapter/notifyChannel"
 	"polkovnik/domain"
-	"text/template"
+	receiverProc "polkovnik/receiver"
 )
 
 type receiverTemplateDto struct {
@@ -35,6 +32,7 @@ type receiverId struct {
 type receiverResponseItem struct {
 	Id       string            `json:"id"`
 	Active   bool              `json:"active"`
+	Title    string            `json:"title"`
 	Type     string            `json:"type"`
 	Format   string            `json:"format"`
 	Settings map[string]string `json:"settings"`
@@ -92,57 +90,19 @@ func (a apiHandler) Receive() http.Handler {
 			return
 		}
 
-		var err error
-		var post *interface{}
-		var body []byte
-		var templateData receiverTemplateDto
-
-		templateData = receiverTemplateDto{
-			Method: r.Method,
-			Header: r.Header,
-			Params: r.URL.Query(),
+		receiver := a.store.GetReceiver(team.Id, vars["receiverId"])
+		if receiver == nil {
+			renderJson(w, http.StatusNotFound, &ResponseError{Error: fmt.Sprintf("Reciver #%s on team #%s not found", vars["receiverId"], vars["teamId"])})
+			return
 		}
 
-		if r.Method == http.MethodPost {
-			body, err = ioutil.ReadAll(r.Body)
-			if err == nil && len(body) > 0 {
-				switch r.Header.Get("Content-Type") {
-				case "application/json":
-					err = json.Unmarshal(body, &post)
-					if err == nil {
-						templateData.Body = post
-					}
-				case "application/xml":
-					err = xml.Unmarshal(body, &post)
-					if err == nil {
-						templateData.Body = post
-					}
-				}
-			}
+		if receiver.Active == false {
+			renderJson(w, http.StatusNotFound, &ResponseError{Error: fmt.Sprintf("Reciver #%s on team #%s is disabled", vars["receiverId"], vars["teamId"])})
+			return
 		}
 
-		buf := &bytes.Buffer{}
-		tpl, err := template.New("test").Funcs(
-			template.FuncMap{
-				"getValue": func(key string, values map[string][]string) string {
-					if values == nil {
-						return ""
-					}
-					vs := values[key]
-					if len(vs) == 0 {
-						return ""
-					}
-					return vs[0]
-				},
-			},
-		).Parse("**Пришли данные: -> {{ .Method }} имя {{ .Body.name }} и логин {{ .Body.login }}, а параметр {{  getValue \"test\" .Params }} **")
-
-		if err == nil {
-			err = tpl.Execute(buf, templateData)
-		}
-
-		channel, err := notifyChannel.New(team.Channel, a.processor.Tpl)
-		_, err = channel.SendTeamMessage(notifyChannel.Message{Text: buf.String()})
+		receiverProcessor := receiverProc.Processor{Tpl: a.processor.Tpl}
+		err := receiverProcessor.Run(team, receiver, receiverProc.CreateTemplateDto(receiver, r))
 
 		if err != nil {
 			renderJson(w, http.StatusBadRequest, &ResponseError{Error: err.Error()})
@@ -150,8 +110,6 @@ func (a apiHandler) Receive() http.Handler {
 		}
 
 		fmt.Println("Data receive!")
-		fmt.Println("Data: ", templateData)
-		fmt.Println("Result: ", buf.String())
 
 		renderJson(w, http.StatusOK, ResponseSuccess{Result: "Ok"})
 	})
@@ -164,6 +122,7 @@ func createReceiverResponseItem(receiver *domain.Receiver) receiverResponseItem 
 		Type:     string(receiver.Type),
 		Format:   string(receiver.Format),
 		Settings: receiver.Settings,
+		Title:    receiver.Title,
 	}
 }
 
@@ -228,6 +187,7 @@ func (a apiHandler) ReceiverAdd() http.Handler {
 		}
 
 		receiver, err = domain.NewReceiver(
+			request.Title,
 			request.Active,
 			*domain.GetReceiverType(request.Type),
 			request.Settings,
@@ -273,6 +233,7 @@ func (a apiHandler) ReceiverEdit() http.Handler {
 		}
 
 		err = receiver.Edit(
+			request.Title,
 			request.Active,
 			*domain.GetReceiverType(request.Type),
 			request.Settings,

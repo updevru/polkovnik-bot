@@ -23,6 +23,7 @@ const (
 type Receiver struct {
 	Id         string
 	Active     bool
+	Title      string
 	Format     ReceiverFormat
 	Type       ReceiverType
 	Settings   ReceiverSettings
@@ -30,7 +31,8 @@ type Receiver struct {
 	DateUpdate time.Time
 }
 
-func (r *Receiver) Edit(status bool, dataType ReceiverType, dataSettings ReceiverSettings, format ReceiverFormat) error {
+func (r *Receiver) Edit(title string, status bool, dataType ReceiverType, dataSettings ReceiverSettings, format ReceiverFormat) error {
+	r.Title = title
 	r.Active = status
 	r.Type = dataType
 	r.Format = format
@@ -40,10 +42,11 @@ func (r *Receiver) Edit(status bool, dataType ReceiverType, dataSettings Receive
 	return nil
 }
 
-func NewReceiver(status bool, dataType ReceiverType, dataSettings ReceiverSettings, format ReceiverFormat) (*Receiver, error) {
+func NewReceiver(title string, status bool, dataType ReceiverType, dataSettings ReceiverSettings, format ReceiverFormat) (*Receiver, error) {
 	return &Receiver{
 		Id:         uuid.NewString(),
 		Active:     status,
+		Title:      title,
 		Type:       dataType,
 		Settings:   dataSettings,
 		Format:     format,

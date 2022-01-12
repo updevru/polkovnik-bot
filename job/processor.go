@@ -41,7 +41,7 @@ func (p *Processor) StartScheduler() {
 	for tick := range p.ticker.C {
 		now := tick.In(time.Local)
 		for _, team := range p.config.Teams {
-			log.Info("Process team ", team.Title)
+			log.Info("Run team ", team.Title)
 
 			if team.Weekend.IsWeekend(now) == true {
 				log.Info("Team ", team.Title, " skip, is weekend")
