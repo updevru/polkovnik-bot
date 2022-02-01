@@ -15,10 +15,10 @@ import (
 )
 
 type TemplateDto struct {
-	Method string
-	Body   interface{}
-	Params url.Values
-	Header http.Header
+	Method  string
+	Body    interface{}
+	Params  url.Values
+	Headers http.Header
 }
 
 func CreateTemplateDto(receiver *domain.Receiver, r *http.Request) TemplateDto {
@@ -28,9 +28,9 @@ func CreateTemplateDto(receiver *domain.Receiver, r *http.Request) TemplateDto {
 	var body []byte
 
 	data = TemplateDto{
-		Method: r.Method,
-		Header: r.Header,
-		Params: r.URL.Query(),
+		Method:  r.Method,
+		Headers: r.Header,
+		Params:  r.URL.Query(),
 	}
 
 	if r.Method != http.MethodGet {

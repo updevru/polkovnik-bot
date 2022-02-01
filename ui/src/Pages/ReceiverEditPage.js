@@ -1,8 +1,9 @@
 import React from 'react';
-import {PageHeader, Spin} from 'antd';
+import {PageHeader, Spin, Row, Col} from 'antd';
 import ServerApi from "../Services/ServerApi";
 import AlertMessage from "../Components/AlertMessage/AlertMessage";
 import ReceiverEditForm from "../Forms/ReceiverEditForm";
+import ReceiverHelpPage from "./ReceiverHelpPage";
 
 class ReceiverEditPage extends React.Component{
 
@@ -64,9 +65,14 @@ class ReceiverEditPage extends React.Component{
                 <Spin spinning={this.state.loading}>
                     <div className={"app-form-container"}>
                         <AlertMessage message={this.state.message} />
-                        {this.state.item &&
-                            <ReceiverEditForm value={this.state.item} onSubmit={this.handleSubmit}/>
-                        }
+                        <Row gutter={[16, 16]}>
+                            <Col span={12}>
+                                {this.state.item &&
+                                <ReceiverEditForm value={this.state.item} onSubmit={this.handleSubmit}/>
+                                }
+                            </Col>
+                            <Col span={12}><ReceiverHelpPage/></Col>
+                        </Row>
                     </div>
                 </Spin>
             </PageHeader>

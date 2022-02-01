@@ -65,6 +65,11 @@ class ReceiverListPage extends React.Component{
                 dataIndex: 'title',
             },
             {
+                title: 'URL',
+                key: 'url',
+                dataIndex: 'url',
+            },
+            {
                 title: 'Действие',
                 key: 'type',
                 render: (text, record) => (

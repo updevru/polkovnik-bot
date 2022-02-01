@@ -59,43 +59,6 @@
         }
       }
     },
-    "/team/{teamId}/receive/{receiverId}": {
-      "get": {
-        "tags": [
-          "Receivers"
-        ],
-        "summary": "Прием данных приемником (поддерживает любые методы).",
-        "operationId": "Receive",
-        "parameters": [
-          {
-            "type": "string",
-            "x-go-name": "ReceiverId",
-            "description": "ID Приемника",
-            "name": "receiverId",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "Body",
-            "in": "body",
-            "schema": {
-              "type": "object"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/ResponseSuccess"
-          },
-          "400": {
-            "$ref": "#/responses/ResponseError"
-          },
-          "404": {
-            "$ref": "#/responses/ResponseError"
-          }
-        }
-      }
-    },
     "/team/{teamId}/receivers": {
       "get": {
         "tags": [
@@ -770,10 +733,12 @@
       "type": "object",
       "properties": {
         "active": {
+          "description": "Вкл/Выкл\nЕсли включен, то принимает данные, иначе не принимает",
           "type": "boolean",
           "x-go-name": "Active"
         },
         "format": {
+          "description": "Формат тела запроса (JSON, XML, AUTO)",
           "type": "string",
           "x-go-name": "Format"
         },
@@ -782,15 +747,27 @@
           "x-go-name": "Id"
         },
         "settings": {
+          "description": "Настройки приемника\nКаждому типу приемника соответствуют свои настройки",
           "type": "object",
           "additionalProperties": {
             "type": "string"
           },
           "x-go-name": "Settings"
         },
+        "title": {
+          "description": "Название приемника",
+          "type": "string",
+          "x-go-name": "Title"
+        },
         "type": {
+          "description": "Тип приемника\nsend_team_message - отправка сообщения команде",
           "type": "string",
           "x-go-name": "Type"
+        },
+        "url": {
+          "description": "Адрес приемника",
+          "type": "string",
+          "x-go-name": "Url"
         }
       },
       "x-go-name": "receiverResponseItem",

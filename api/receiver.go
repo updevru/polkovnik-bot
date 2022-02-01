@@ -30,12 +30,22 @@ type receiverId struct {
 // Приемник
 // swagger:model Receiver
 type receiverResponseItem struct {
-	Id       string            `json:"id"`
-	Active   bool              `json:"active"`
-	Title    string            `json:"title"`
-	Type     string            `json:"type"`
-	Format   string            `json:"format"`
+	Id string `json:"id"`
+	//Вкл/Выкл
+	//Если включен, то принимает данные, иначе не принимает
+	Active bool `json:"active"`
+	//Название приемника
+	Title string `json:"title"`
+	//Тип приемника
+	//send_team_message - отправка сообщения команде
+	Type string `json:"type"`
+	//Формат тела запроса (JSON, XML, AUTO)
+	Format string `json:"format"`
+	//Настройки приемника
+	//Каждому типу приемника соответствуют свои настройки
 	Settings map[string]string `json:"settings"`
+	//Адрес приемника
+	Url string `json:"url"`
 }
 
 // swagger:response ReceiversGet
@@ -69,35 +79,27 @@ type receiverRequestWrapper struct {
 	Body interface{}
 }
 
-// swagger:route GET /team/{teamId}/receive/{receiverId} Receivers Receive
-//
-// Прием данных приемником (поддерживает любые методы).
-//
-// Responses:
-//        200: ResponseSuccess
-//        400: ResponseError
-//        404: ResponseError
 func (a apiHandler) Receive() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
 		dump, _ := httputil.DumpRequest(r, true)
-		fmt.Printf("Request: %q", dump)
+		fmt.Printf("Recive request: %s", string(dump))
 
-		team := a.store.GetTeam(vars["teamId"])
-		if team == nil {
-			renderJson(w, http.StatusNotFound, &ResponseError{Error: fmt.Sprintf("Team #%s not found", vars["teamId"])})
+		receiver := a.store.GetReceiverById(vars["receiverId"])
+		if receiver == nil {
+			renderJson(w, http.StatusNotFound, &ResponseError{Error: fmt.Sprintf("Reciver #%s not found", vars["receiverId"])})
 			return
 		}
 
-		receiver := a.store.GetReceiver(team.Id, vars["receiverId"])
-		if receiver == nil {
-			renderJson(w, http.StatusNotFound, &ResponseError{Error: fmt.Sprintf("Reciver #%s on team #%s not found", vars["receiverId"], vars["teamId"])})
+		team := a.store.GetTeamByReceiver(vars["receiverId"])
+		if team == nil {
+			renderJson(w, http.StatusNotFound, &ResponseError{Error: fmt.Sprintf("Team not found")})
 			return
 		}
 
 		if receiver.Active == false {
-			renderJson(w, http.StatusNotFound, &ResponseError{Error: fmt.Sprintf("Reciver #%s on team #%s is disabled", vars["receiverId"], vars["teamId"])})
+			renderJson(w, http.StatusNotFound, &ResponseError{Error: fmt.Sprintf("Reciver #%s is disabled", vars["receiverId"])})
 			return
 		}
 
@@ -123,6 +125,7 @@ func createReceiverResponseItem(receiver *domain.Receiver) receiverResponseItem 
 		Format:   string(receiver.Format),
 		Settings: receiver.Settings,
 		Title:    receiver.Title,
+		Url:      fmt.Sprintf("/receive/%s", receiver.Id),
 	}
 }
 

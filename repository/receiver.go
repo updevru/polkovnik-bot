@@ -13,6 +13,30 @@ func (r Repository) GetReceiver(teamId string, receiverId string) *domain.Receiv
 	return nil
 }
 
+func (r Repository) GetReceiverById(receiverId string) *domain.Receiver {
+	for _, team := range r.GetTeams() {
+		for _, row := range team.Receivers {
+			if row.Id == receiverId {
+				return row
+			}
+		}
+	}
+
+	return nil
+}
+
+func (r Repository) GetTeamByReceiver(receiverId string) *domain.Team {
+	for _, team := range r.GetTeams() {
+		for _, row := range team.Receivers {
+			if row.Id == receiverId {
+				return team
+			}
+		}
+	}
+
+	return nil
+}
+
 func (r Repository) GetReceivers(teamId string) []*domain.Receiver {
 	var result []*domain.Receiver
 	team := r.GetTeam(teamId)

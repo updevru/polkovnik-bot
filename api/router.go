@@ -34,7 +34,7 @@ func CreateRouter(handler *apiHandler, UIFiles embed.FS) *mux.Router {
 	router.Handle("/api/team/{teamId}/receivers/{receiverId}", handler.ReceiverGet()).Methods(http.MethodGet)
 	router.Handle("/api/team/{teamId}/receivers/{receiverId}", handler.ReceiverEdit()).Methods(http.MethodPatch)
 	router.Handle("/api/team/{teamId}/receivers/{receiverId}", handler.ReceiverDelete()).Methods(http.MethodDelete)
-	router.Handle("/api/team/{teamId}/receive/{receiverId}", handler.Receive())
+	router.Handle("/receive/{receiverId}", handler.Receive())
 	router.Use(mux.CORSMethodMiddleware(router))
 
 	spaHandler := SpaHandler{StaticPath: "ui/build", IndexPath: "index.html", Files: UIFiles}
