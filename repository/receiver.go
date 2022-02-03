@@ -51,31 +51,31 @@ func (r Repository) GetReceivers(teamId string) []*domain.Receiver {
 	return result
 }
 
-func (r Repository) AddReceiver(teamId string, receiver *domain.Receiver) bool {
+func (r *Repository) AddReceiver(teamId string, receiver *domain.Receiver) bool {
 	team := r.GetTeam(teamId)
 	team.Receivers = append(team.Receivers, receiver)
 
-	return true
+	return r.update(r.config)
 }
 
-func (r Repository) EditReceiver(teamId string, receiver *domain.Receiver) bool {
+func (r *Repository) EditReceiver(teamId string, receiver *domain.Receiver) bool {
 	team := r.GetTeam(teamId)
 	for i, row := range team.Receivers {
 		if row.Id == receiver.Id {
 			team.Receivers[i] = receiver
-			return true
+			return r.update(r.config)
 		}
 	}
 
 	return false
 }
 
-func (r Repository) DeleteReceiver(teamId string, receiver *domain.Receiver) bool {
+func (r *Repository) DeleteReceiver(teamId string, receiver *domain.Receiver) bool {
 	team := r.GetTeam(teamId)
 	for index, row := range team.Receivers {
 		if row.Id == receiver.Id {
 			team.Receivers = append(team.Receivers[:index], team.Receivers[index+1:]...)
-			return true
+			return r.update(r.config)
 		}
 	}
 

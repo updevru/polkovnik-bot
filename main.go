@@ -11,10 +11,10 @@ import (
 	"polkovnik/adapter/storage"
 	"polkovnik/api"
 	"polkovnik/app"
-	"polkovnik/domain"
 	"polkovnik/job"
 	"polkovnik/repository"
 	"syscall"
+	"time"
 )
 
 //go:generate swagger generate spec -o ./ui/public/doc/api/swagger.json
@@ -45,8 +45,8 @@ func init() {
 	}
 }
 
-func runWebServer(port string, config *domain.Config, history *repository.HistoryRepository, processor *job.Processor) {
-	API := api.NewApiHandler(repository.NewRepository(config), history, processor)
+func runWebServer(port string, repository *repository.Repository, history *repository.HistoryRepository, processor *job.Processor) {
+	API := api.NewApiHandler(repository, history, processor)
 
 	server := http.Server{
 		Addr:    ":" + port,
@@ -63,7 +63,8 @@ func runWebServer(port string, config *domain.Config, history *repository.Histor
 func main() {
 	fmt.Println("Config file: ", *configFile)
 	configStorage := storage.NewConfigFile(*configFile)
-	config, err := configStorage.Load()
+	dataRepository := repository.NewRepository(configStorage)
+	err := dataRepository.Load()
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -77,13 +78,13 @@ func main() {
 	}
 	defer historyStorage.Close()
 
-	err = app.Migrate(config)
+	err = app.Migrate(dataRepository)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	processor := job.NewProcessor(app.NewTemplateEngine("templates", templates), config, historyStorage)
+	processor := job.NewProcessor(app.NewTemplateEngine("templates", templates), dataRepository, historyStorage)
 
 	signals := make(chan os.Signal, 1)
 	exit := make(chan bool, 1)
@@ -103,11 +104,24 @@ func main() {
 	go processor.StartWorker()
 
 	fmt.Println("Run http server")
-	go runWebServer(*httpPort, config, historyStorage, processor)
+	go runWebServer(*httpPort, dataRepository, historyStorage, processor)
+
+	go func() {
+		ticker := time.NewTicker(time.Minute)
+		for range ticker.C {
+			result, err := dataRepository.Flush()
+			if err != nil {
+				log.Error(fmt.Sprintf("Save config... Error: %s", err.Error()))
+			} else if result {
+				log.Info("Save config... Ok")
+			}
+		}
+	}()
+
 	<-exit
 
 	fmt.Print("Save config...")
-	err = configStorage.Update(config)
+	_, err = dataRepository.Flush()
 	if err != nil {
 		fmt.Println(err)
 	}

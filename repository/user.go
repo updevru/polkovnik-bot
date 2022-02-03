@@ -27,31 +27,31 @@ func (r Repository) GetUsers(teamId string) []*domain.User {
 	return result
 }
 
-func (r Repository) AddUser(teamId string, user *domain.User) bool {
+func (r *Repository) AddUser(teamId string, user *domain.User) bool {
 	team := r.GetTeam(teamId)
 	team.Users = append(team.Users, user)
 
-	return true
+	return r.update(r.config)
 }
 
-func (r Repository) EditUser(teamId string, user *domain.User) bool {
+func (r *Repository) EditUser(teamId string, user *domain.User) bool {
 	team := r.GetTeam(teamId)
 	for i, row := range team.Users {
 		if row.Id == user.Id {
 			team.Users[i] = user
-			return true
+			return r.update(r.config)
 		}
 	}
 
 	return false
 }
 
-func (r Repository) DeleteUser(teamId string, user *domain.User) bool {
+func (r *Repository) DeleteUser(teamId string, user *domain.User) bool {
 	team := r.GetTeam(teamId)
 	for index, row := range team.Users {
 		if row.Id == user.Id {
 			team.Users = append(team.Users[:index], team.Users[index+1:]...)
-			return true
+			return r.update(r.config)
 		}
 	}
 

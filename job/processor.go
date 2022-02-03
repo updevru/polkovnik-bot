@@ -17,21 +17,21 @@ type messageQueue struct {
 }
 
 type Processor struct {
-	Tpl     *app.TemplateEngine
-	config  *domain.Config
-	history *repository.HistoryRepository
-	queue   chan *messageQueue
-	ticker  *time.Ticker
-	lock    map[string]string
+	Tpl        *app.TemplateEngine
+	repository *repository.Repository
+	history    *repository.HistoryRepository
+	queue      chan *messageQueue
+	ticker     *time.Ticker
+	lock       map[string]string
 }
 
-func NewProcessor(tpl *app.TemplateEngine, config *domain.Config, history *repository.HistoryRepository) *Processor {
+func NewProcessor(tpl *app.TemplateEngine, repository *repository.Repository, history *repository.HistoryRepository) *Processor {
 	return &Processor{
-		Tpl:     tpl,
-		config:  config,
-		history: history,
-		lock:    make(map[string]string, 10),
-		queue:   make(chan *messageQueue, 20),
+		Tpl:        tpl,
+		repository: repository,
+		history:    history,
+		lock:       make(map[string]string, 10),
+		queue:      make(chan *messageQueue, 20),
 	}
 }
 
@@ -40,7 +40,7 @@ func (p *Processor) StartScheduler() {
 
 	for tick := range p.ticker.C {
 		now := tick.In(time.Local)
-		for _, team := range p.config.Teams {
+		for _, team := range p.repository.GetTeams() {
 			log.Info("Run team ", team.Title)
 
 			if team.Weekend.IsWeekend(now) == true {

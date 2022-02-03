@@ -20,7 +20,7 @@ func (r Repository) GetTeam(id string) *domain.Team {
 	return nil
 }
 
-func (r Repository) EditTeam(team *domain.Team) bool {
+func (r *Repository) EditTeam(team *domain.Team) bool {
 	for i, row := range r.config.Teams {
 		if row.Id == team.Id {
 			r.config.Teams[i] = team
@@ -28,11 +28,11 @@ func (r Repository) EditTeam(team *domain.Team) bool {
 		}
 	}
 
-	return false
+	return r.update(r.config)
 }
 
-func (r Repository) AddTeam(team *domain.Team) bool {
+func (r *Repository) AddTeam(team *domain.Team) bool {
 	r.config.Teams = append(r.config.Teams, team)
 
-	return true
+	return r.update(r.config)
 }
