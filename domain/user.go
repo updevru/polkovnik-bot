@@ -13,6 +13,7 @@ type User struct {
 	Points   int
 	Weekend  Weekend
 	Active   bool
+	Gender   string
 }
 
 func userValidate(name string, login string, nickname string) error {
@@ -31,7 +32,15 @@ func userValidate(name string, login string, nickname string) error {
 	return nil
 }
 
-func NewUser(name string, login string, nickname string, weekendDays []string, intervals []WeekendInterval) (*User, error) {
+func genderValidate(gender string) error {
+	if gender != "male" && gender != "female" {
+		return errors.New("gender should be 'male' or 'female")
+	}
+
+	return nil
+}
+
+func NewUser(name string, login string, nickname string, gender string, weekendDays []string, intervals []WeekendInterval) (*User, error) {
 	err := userValidate(name, login, nickname)
 	if err != nil {
 		return nil, err
@@ -48,10 +57,11 @@ func NewUser(name string, login string, nickname string, weekendDays []string, i
 			Intervals: intervals,
 		},
 		Active: true,
+		Gender: gender,
 	}, nil
 }
 
-func (u *User) Edit(name string, login string, nickname string, active bool, weekendDays []string, intervals []WeekendInterval) error {
+func (u *User) Edit(name string, login string, nickname string, gender string, active bool, weekendDays []string, intervals []WeekendInterval) error {
 	err := userValidate(name, login, nickname)
 	if err != nil {
 		return err
@@ -63,6 +73,11 @@ func (u *User) Edit(name string, login string, nickname string, active bool, wee
 	u.Weekend.WeekDays = weekendDays
 	u.Weekend.Intervals = intervals
 	u.Active = active
+
+	err = genderValidate(gender)
+	if err == nil {
+		u.Gender = gender
+	}
 
 	return nil
 }
