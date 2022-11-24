@@ -56,3 +56,14 @@ docker run updev/polkovnik-bot -v ./config.json:/app/var/config.json -v ./data.d
 ## Документация API
 
 После запуска зайти по адресу /doc/api/
+
+## Разработка
+
+Для запуска проекта в режиме разработке удобно использовать Docker.
+
+В корне репоизтория выполнить.
+```bash
+docker compose up
+```
+
+Открыть в браузере http://localhost:3000

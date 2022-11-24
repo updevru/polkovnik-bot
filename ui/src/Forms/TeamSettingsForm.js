@@ -11,10 +11,30 @@ class TeamSettingsForm extends React.Component {
     }
 
     onFinish(values: any) {
-        this.props.onSubmit(WeekendDataValue(values))
+        let data = WeekendDataValue(values);
+
+        if (data.issue_tracker_settings && 'password' in data.issue_tracker_settings && !data.issue_tracker_settings.password) {
+            delete data.issue_tracker_settings.password;
+        }
+
+        if (data.notify_channel_settings && 'token' in data.notify_channel_settings && !data.notify_channel_settings.token) {
+            delete data.notify_channel_settings.token;
+        }
+
+        this.props.onSubmit(data)
     }
 
     render() {
+        let passwordRules = [];
+        if (!this.props.value) {
+            passwordRules = [{ required: true, message: 'Пароль не должен быть пустым' }];
+        }
+
+        let tokenRules = [];
+        if (!this.props.value) {
+            tokenRules = [{ required: true, message: 'Токен не должено быть пустым' }];
+        }
+
         return (
             <Form
                 layout="vertical"
@@ -70,10 +90,9 @@ class TeamSettingsForm extends React.Component {
                         <Form.Item
                             label="Пароль"
                             name={["issue_tracker_settings", 'password']}
-                            rules={[{ required: true, message: 'Пароль не должен быть пустым' }]}
-
+                            rules={passwordRules}
                         >
-                            <Input />
+                            <Input.Password />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -98,9 +117,9 @@ class TeamSettingsForm extends React.Component {
                         <Form.Item
                             label="Токен бота"
                             name={["notify_channel_settings", 'token']}
-                            rules={[{ required: true, message: 'Токен не должено быть пустым' }]}
+                            rules={tokenRules}
                         >
-                            <Input />
+                            <Input.Password />
                         </Form.Item>
 
                         <Divider>Выходные</Divider>

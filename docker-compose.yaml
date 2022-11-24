@@ -1,0 +1,25 @@
+version: '3'
+services:
+  ui:
+    image: node:14
+    volumes:
+      - ./ui:/app
+    ports:
+      - '3000:3000'
+    working_dir: /app
+    command: "npm run start"
+    depends_on:
+      - server
+
+  server:
+    image: golang:1.16
+    ports:
+      - '8080:8080'
+    working_dir: /app
+    command: go run /app/main.go
+    volumes:
+      - ./:/app
+      - server-data:/app/var
+
+volumes:
+  server-data:

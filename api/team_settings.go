@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
+	"polkovnik/adapter/issueTracker"
 	"polkovnik/domain"
 )
 
@@ -57,12 +58,11 @@ func createTeamSettingsResponseItem(team *domain.Team) teamSettingsResponseItem 
 	if team.Channel != nil {
 		result.NotifyChannelType = team.Channel.Type
 		result.NotifyChannelChannelId = team.Channel.ChannelId
-		result.NotifyChannelSettings = team.Channel.Settings
 	}
 
 	if team.IssueTracker != nil {
 		result.IssueTrackerType = team.IssueTracker.Type
-		result.IssueTrackerSettings = team.IssueTracker.Settings
+		result.IssueTrackerSettings, _ = issueTracker.GetPublicSettings(team.IssueTracker)
 	}
 
 	return result

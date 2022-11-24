@@ -24,11 +24,11 @@ func (r *Repository) EditTeam(team *domain.Team) bool {
 	for i, row := range r.config.Teams {
 		if row.Id == team.Id {
 			r.config.Teams[i] = team
-			return true
+			return r.update(r.config)
 		}
 	}
 
-	return r.update(r.config)
+	return false
 }
 
 func (r *Repository) AddTeam(team *domain.Team) bool {

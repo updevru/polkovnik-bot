@@ -50,6 +50,29 @@ func New(tracker *domain.IssueTracker) (Interface, error) {
 	return IssueTracker, nil
 }
 
+func GetPublicSettings(tracker *domain.IssueTracker) (map[string]string, error) {
+	result := make(map[string]string)
+
+	switch tracker.Type {
+	case JiraTrackerTape:
+		if val, ok := tracker.Settings["url"]; ok {
+			result["url"] = val
+		} else {
+			result["url"] = ""
+		}
+
+		if val, ok := tracker.Settings["username"]; ok {
+			result["username"] = val
+		} else {
+			result["username"] = ""
+		}
+	default:
+		return nil, errors.New("tracker type not found")
+	}
+
+	return result, nil
+}
+
 type CalculateTeamWorkLogResponse struct {
 	User domain.User
 	Time domain.Time

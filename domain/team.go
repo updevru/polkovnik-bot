@@ -95,17 +95,26 @@ func (t *Team) EditSettings(title string, notifyChannelType string, notifyChanne
 
 	t.Title = title
 	if t.Channel == nil {
-		t.Channel = &NotifyChannel{}
+		t.Channel = NewNotifyChannel()
 	}
 	t.Channel.Type = notifyChannelType
 	t.Channel.ChannelId = notifyChannelChannelId
-	t.Channel.Settings = notifyChannelSettings
+	for name, value := range notifyChannelSettings {
+		if len(value) != 0 {
+			t.Channel.Settings[name] = value
+		}
+	}
 
 	if t.IssueTracker == nil {
-		t.IssueTracker = &IssueTracker{}
+		t.IssueTracker = NewIssueTracker()
 	}
 	t.IssueTracker.Type = issueTrackerType
-	t.IssueTracker.Settings = issueTrackerSettings
+	for name, value := range issueTrackerSettings {
+		if len(value) != 0 {
+			t.IssueTracker.Settings[name] = value
+		}
+	}
+
 	t.MinWorkLog = minWorkLog
 	t.Weekend.WeekDays = weekendDays
 	t.Weekend.Intervals = intervals
