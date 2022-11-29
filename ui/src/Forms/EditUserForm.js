@@ -1,6 +1,7 @@
 import React from 'react';
-import {Form, Input, Button, Checkbox} from 'antd';
+import {Form, Input, Button, Checkbox, Select} from 'antd';
 import {Weekend, WeekendDataValue, WeekendFormValue} from "../Components/Weekend/Weekend";
+import {Option} from "antd/es/mentions";
 
 class EditUserForm extends React.Component {
     constructor(props) {
@@ -49,6 +50,19 @@ class EditUserForm extends React.Component {
                     rules={[{ required: true, message: 'Не должно быть пустым' }]}
                 >
                     <Input />
+                </Form.Item>
+
+                <Form.Item
+                    label="Пол пользователя"
+                    name="gender"
+                    rules={[{required: true}]}
+                >
+                    <Select
+                        defaultValue="male"
+                    >
+                        <Option value="male">Мужской</Option>
+                        <Option value="female">Женский</Option>
+                    </Select>
                 </Form.Item>
 
                 <Weekend />

@@ -27,6 +27,8 @@ type userResponseItem struct {
 	Login string `json:"login"`
 	//Ник пользователя в система чата
 	NickName string `json:"nickname"`
+	// Пол пользователя
+	Gender string `json:"gender"`
 	//Рабочее время пользователя
 	Weekend weekendItem `json:"weekend"`
 	//Вкл/Выкл
@@ -71,6 +73,7 @@ func createUserResponseItem(user *domain.User) userResponseItem {
 		Name:     user.Name,
 		Login:    user.Login,
 		NickName: user.NickName,
+		Gender:   user.Gender,
 		Weekend: weekendItem{
 			WeekDays:  user.Weekend.WeekDays,
 			Intervals: intervals,
@@ -140,7 +143,7 @@ func (a apiHandler) UserAdd() http.Handler {
 			err = json.Unmarshal(body, &request)
 		}
 
-		user, err = domain.NewUser(request.Name, request.Login, request.NickName, request.Weekend.WeekDays, request.Weekend.createIntervals())
+		user, err = domain.NewUser(request.Name, request.Login, request.NickName, request.Gender, request.Weekend.WeekDays, request.Weekend.createIntervals())
 		if err != nil {
 			renderJson(w, http.StatusBadRequest, &ResponseError{Error: err.Error()})
 			return
@@ -180,7 +183,7 @@ func (a apiHandler) UserEdit() http.Handler {
 			return
 		}
 
-		err = user.Edit(request.Name, request.Login, request.NickName, request.Active, request.Weekend.WeekDays, request.Weekend.createIntervals())
+		err = user.Edit(request.Name, request.Login, request.NickName, request.Gender, request.Active, request.Weekend.WeekDays, request.Weekend.createIntervals())
 		if err != nil {
 			renderJson(w, http.StatusBadRequest, &ResponseError{Error: err.Error()})
 			return

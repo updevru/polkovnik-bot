@@ -2,3 +2,5 @@
 /var/config.json
 /var/*.db
 *.exe
+package-lock.json
+config.json
